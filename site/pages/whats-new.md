@@ -8,11 +8,18 @@ description: Everything added to US Congress vs Voters, newest first - new surve
 <a href="upcoming.html">Upcoming changes</a>. Every change that corrected a figure is in the
 <a href="corrections.html">corrections log</a>.</p>
 
-*Last updated November 20, 2026.*
+*Last updated November 21, 2026.*
 
 Follow these and every correction in a feed reader: [updates feed (RSS)](feed.xml).
 
 ## Recently added {#recent}
+
+**November 21, 2026**
+
+- **Clearer column on [Members by the numbers](numbers.html).** "Started in this seat" is now "In this
+  district since", because it counts from when the current district number began, not from when the
+  member joined Congress. District numbers change after each census; open a member to see every
+  district they represented.
 
 **November 20, 2026**
 
