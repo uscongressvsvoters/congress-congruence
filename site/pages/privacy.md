@@ -41,6 +41,11 @@ already viewed on this site (the most recent few hundred), and if you add the si
 it opens as an app. Those copies stay on your device, are replaced with fresh ones whenever you're
 online, and are cleared with your browser's site data. Nothing about them is sent to us.
 
+**Your ZIP code** never leaves your device. "Find your members by ZIP code" downloads one file that is
+the same for every visitor, a list of ZIP codes and their congressional districts, and looks your ZIP
+code up in it, in your browser. Only the state it finds is then requested, the same way the state pages
+ask for a state's members. The ZIP code isn't saved, even in your browser.
+
 ## What any web server records {#server-logs}
 
 Like almost every website, our web server keeps a standard log of requests (the address of the device

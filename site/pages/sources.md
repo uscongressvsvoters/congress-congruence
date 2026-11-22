@@ -271,6 +271,22 @@ citizenship figures are in separate tables and aren't shown.
 
 **How often:** a new year's figures are released each September and loaded automatically.
 
+## Members' contact details and ZIP codes {#contact}
+
+**Contact details:** each serving member's official website, contact form, Washington office phone and
+address, and their offices back home come from the public
+[congress-legislators](https://github.com/unitedstates/congress-legislators) list, refreshed daily
+with the member list. Offices sometimes move before the list catches up; a member's own website has
+the latest.
+
+**ZIP codes:** "Find your members by ZIP code" uses the Census Bureau's
+[relationship file](https://www2.census.gov/geo/docs/maps-data/data/rel2020/cd-sld/) between
+congressional districts and ZIP Code Tabulation Areas, the Census Bureau's area version of ZIP codes.
+Many ZIP codes cross district lines; the lookup shows each district that holds at least 1% of the ZIP
+code's land, with its share. Some ZIP codes, such as P.O. boxes, have no area of their own. To check by
+full address, use [the House's lookup](https://www.house.gov/representatives/find-your-representative).
+District lines are the current Congress's, updated when a new Congress begins.
+
 ## Other surveys: their status {#not-used}
 
 Why isn't a particular survey here? A survey can be used only if it asks people

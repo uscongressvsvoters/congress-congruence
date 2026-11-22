@@ -1,5 +1,7 @@
 ---
 title: Start here
+head: |
+  <script src="zip-finder.js" defer></script>
 description: What US Congress vs Voters is and why it exists, why Americans elect members of Congress to vote on bills instead of voting on them directly, and why members' votes and what people tell surveys can differ.
 ---
 # Start here
@@ -95,9 +97,23 @@ question that Congress also voted on, the result shows what that state's voters 
 - **Primaries.** Many members face their strongest challenge from within their own party, so primary
   elections are often where voters have the most say over who serves.
 - **Contacting members.** House and Senate offices track the calls, letters and emails they receive,
-  by issue.
+  by issue. [How to reach yours](#contact).
 - **Public opinion.** Members watch polls and surveys of the people they represent, which is what
   this site compares their votes with.
+
+## Contact your members {#contact}
+
+Your two senators and your representative work for everyone where you live, whether or not you voted
+for them. Their offices keep count of the calls, emails and letters they get on each issue. If you care
+how they vote, tell them: a short message in your
+own words, saying where you live and what you'd like them to do, is what offices are set up to hear.
+
+<div class="zip-finder" data-zip-finder><p>Find your members by ZIP code: this needs JavaScript. Every
+member's page on this site lists how to reach them.</p></div>
+
+Each member's page on this site lists their website, contact form, Washington phone number and their
+offices back home. You can also call the U.S. Capitol switchboard at 202-224-3121 and ask for your
+member's office.
 
 ## Should members follow the people they represent? {#follow}
 

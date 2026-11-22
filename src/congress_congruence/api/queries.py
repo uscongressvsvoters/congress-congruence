@@ -65,6 +65,29 @@ select distinct on (t.bioguide_id)
  order by t.bioguide_id, t.start_date desc
 """
 
+# How to reach members: website, contact form, Washington office (one row each), and their state and
+# district offices. Shown for serving members only (the source keeps old details for former ones).
+CONTACTS = """
+select bioguide_id, website, contact_form, phone, address
+  from core.member_contact where bioguide_id = any(%(ids)s)
+"""
+
+OFFICES = """
+select city, state, address, suite, building, zip, phone
+  from core.member_office where bioguide_id = %(id)s
+ order by city, office_id
+"""
+
+# The current Congress's ZIP-to-district table (ingest/zip_districts.py): the newest Congress loaded
+# that has begun (a Congress begins January 3 of the year after its election: 2 * n + 1787).
+ZIP_DISTRICTS = """
+with c as (select max(congress) as congress from core.zip_district
+            where make_date(2 * congress + 1787, 1, 3) <= %(on)s)
+select z.congress, z.zcta, z.state, z.district, z.land_share
+  from core.zip_district z join c using (congress)
+ order by z.zcta, z.land_share desc
+"""
+
 MEMBER = """
 select m.bioguide_id, coalesce(m.official_full, m.first_name || ' ' || m.last_name) as name,
        t.chamber, t.state, t.district, t.party, t.caucus, t.start_date, t.end_date,

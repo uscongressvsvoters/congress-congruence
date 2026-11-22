@@ -43,6 +43,15 @@ Principles that apply to every source:
   next daily refresh uses the list's own date again (sql/009).
 - **Party and caucus.** Independents count with the party they caucus with (for "voted with
   party majority"). A party switch in the middle of a term isn't reflected yet.
+- **Contact details.** The latest term's `url`, `contact_form`, `phone` and `address` go to
+  `core.member_contact`, and `legislators-district-offices.yaml` to `core.member_office`, both
+  replaced on every run (sql/016). The API shows them for serving members only. In Nov 2026 every
+  current member had a website, phone and address; only 88 (mostly senators) had a contact form.
+- **ZIP codes.** `ingest/zip_districts.py` loads the Census relationship file between congressional
+  districts and 2020 ZCTAs (`tab20_cd<congress>20_zcta520_natl.txt`, pipe-delimited) into
+  `core.zip_district`, keeping each district with at least 1% of a ZCTA's land (or its largest). The
+  site build writes it to `members/zip-districts.json(.gz)` and the reader's browser does the lookup.
+  Load the 120th Congress's file in January 2027 (`python -m congress_congruence.ingest.zip_districts 120`).
 - **Known gaps.**
   - About 300 members who started in 2020 or later have no ICPSR ID in this dataset; the
     Voteview member file, which lists Bioguide IDs, fills the gap.

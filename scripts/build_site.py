@@ -41,7 +41,7 @@ NAV = [
     ("faq.html", "FAQ"),
     ("about.html", "About"),
 ]
-ASSETS = {"site.css": SITE / "site.css", "site.js": SITE / "site.js", "cards.js": SITE / "cards.js",
+ASSETS = {"site.css": SITE / "site.css", "site.js": SITE / "site.js", "cards.js": SITE / "cards.js", "zip-finder.js": SITE / "zip-finder.js",
           "cc-member-panel.js": ROOT / "web" / "cc-member-panel.js"}
 
 

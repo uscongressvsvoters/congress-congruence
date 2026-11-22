@@ -26,7 +26,9 @@ PEOPLE = [
                  {"start": "2016-03-02", "end": "2017-01-03", "party": "Independent"},
              ]},
             {"type": "sen", "start": "2017-01-03", "end": "2023-01-03", "state": "TX",
-             "class": 2, "party": "Independent", "caucus": "Democrat"},
+             "class": 2, "party": "Independent", "caucus": "Democrat",
+             "url": "https://example.senate.gov", "contact_form": "https://example.senate.gov/contact",
+             "phone": "202-224-0000", "address": "1 Hart Senate Office Building Washington DC 20510"},
         ],
     },
     {
@@ -64,6 +66,20 @@ def test_parse_maps_chambers_and_seat_fields():
     assert len(house["party_affiliations"]) == 2
 
 
+def test_parse_keeps_contacts_and_offices_of_known_members():
+    p = members.parse(PEOPLE)
+    assert p.contacts == [("X000001", "https://example.senate.gov", "https://example.senate.gov/contact",
+                           "202-224-0000", "1 Hart Senate Office Building Washington DC 20510")]
+    offices = members.parse_offices([
+        {"id": {"bioguide": "X000001"}, "offices": [
+            {"id": "X000001-austin", "address": "1 Main St.", "city": "Austin", "state": "TX", "zip": 78701,
+             "phone": "512-555-0100"}]},
+        {"id": {"bioguide": "Z999999"}, "offices": [{"id": "Z-x", "city": "Nowhere"}]},   # unknown: skipped
+    ], {"X000001", "X000002"})
+    assert offices == [("X000001", "X000001-austin", "Austin", "TX", "1 Main St.", None, None, "78701",
+                        "512-555-0100")]
+
+
 @pytest.fixture
 def conn():
     url = os.environ.get("TEST_DATABASE_URL")
@@ -81,7 +97,8 @@ def test_load_writes_rows_and_is_rerunnable(conn):
     parsed = members.parse(PEOPLE)
     first = members.load(conn, parsed)
     second = members.load(conn, parsed)  # re-run must not duplicate anything
-    assert first == second == {"members": 2, "external_ids": 4, "terms": 3, "party_changes": 2}
+    assert first == second == {"members": 2, "external_ids": 4, "terms": 3, "party_changes": 2,
+                               "contacts": 1, "offices": 0}
     with conn.cursor() as cur:
         cur.execute("select count(*) from core.term")
         assert cur.fetchone()[0] == 3

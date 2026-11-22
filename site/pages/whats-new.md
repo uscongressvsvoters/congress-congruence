@@ -16,6 +16,11 @@ Follow these and every correction in a feed reader: [updates feed (RSS)](feed.xm
 
 **November 22, 2026**
 
+- **Contact your members.** Every serving member's page now lists their official website, contact form,
+  Washington phone number and their offices back home, and [Start here](start.html#contact) explains
+  how to reach them. **Find your members by ZIP code**, on the home page and Start here, shows your
+  senators and representative with their phone numbers. Your ZIP code is looked up on your own device
+  and never sent to this site. See [Sources](sources.html#contact) and [Privacy](privacy.html#browser).
 - **Start here.** A new page, linked from the top of every page, explains why this site exists and how
   representation works: why voters elect members of Congress rather than voting on federal bills
   themselves, where voters do decide laws directly, and the long-running debate over how closely

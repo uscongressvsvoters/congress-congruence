@@ -23,6 +23,7 @@ own preview image.
 import argparse
 import concurrent.futures
 import hashlib
+import gzip
 import html
 import json
 import re
@@ -245,6 +246,46 @@ def plain_score(s: dict) -> str:
 
 # ------------------------------------------------------------------------------------- pages
 
+def tel(phone: str) -> str:
+    digits = re.sub(r"\D", "", phone)
+    return f'<a href="tel:+1{digits[-10:]}">{e(phone)}</a>' if len(digits) >= 10 else e(phone)
+
+
+def contact_html(m: dict) -> list[str]:
+    """How to reach a serving member: website, contact form, Washington office, state offices."""
+    c, offices = m.get("contact") or {}, m.get("offices") or []
+    if not m.get("serving", True) or not (c or offices):
+        return []
+    who = "senator" if m["chamber"] == "senate" else "representative"
+    out = ['<h2 id="contact">Contact</h2>',
+           f"<p>Members of Congress hear from the people they represent by phone, email and letter, and "
+           f"their offices keep track of what people say. Tell your {who} what you think.</p>", '<ul class="contact">']
+    links = [f'<a href="{e(c["website"])}" rel="noopener">Official website</a>'] if c.get("website") else []
+    if c.get("contact_form"):
+        links.append(f'<a href="{e(c["contact_form"])}" rel="noopener">Email (contact form)</a>')
+    elif c.get("website"):
+        links.append("email through the website's contact page")
+    if links:
+        out.append(f"<li>{' · '.join(links)}</li>")
+    if c.get("phone") or c.get("address"):
+        out.append("<li><strong>Washington office:</strong> " + " · ".join(
+            x for x in (e(c.get("address", "")), tel(c["phone"]) if c.get("phone") else "") if x) + "</li>")
+    out.append("</ul>")
+    if offices:
+        home = "state" if m["chamber"] == "senate" else "district"
+        out.append(f'<details class="more"><summary>Offices in the {home} ({len(offices)})</summary><ul class="offices">')
+        for o in offices:
+            where = ", ".join(x for x in (o.get("building"), o.get("address"), o.get("suite")) if x)
+            place = " ".join(x for x in (o.get("city", "") + ",", o.get("state"), o.get("zip")) if x).strip(", ")
+            out.append(f"<li><strong>{e(o.get('city', ''))}</strong>: {e(where)}{', ' if where else ''}{e(place)}"
+                       + (f" · {tel(o['phone'])}" if o.get("phone") else "") + "</li>")
+        out.append("</ul></details>")
+    out.append('<p class="meta">Contact details from the public '
+               '<a href="https://github.com/unitedstates/congress-legislators">congress-legislators</a> list, '
+               "updated daily. Offices sometimes change; the member's website has the latest.</p>")
+    return out
+
+
 def member_page(m: dict, opinion: dict | None, votes: list[dict], slugs: dict, today: date) -> tuple[dict, str]:
     sid, state = m["bioguide_id"], m["state"]
     sname = STATE_NAMES.get(state, state)
@@ -299,6 +340,7 @@ def member_page(m: dict, opinion: dict | None, votes: list[dict], slugs: dict, t
         else:
             p.append(f"<p>{e(pop['area'])} has about {people(pop['residents'])} residents.</p>")
         p.append(citizens_line(pop))
+    p += contact_html(m)
 
     # ---- surveyed votes
     items = (opinion or {}).get("items") or []
@@ -728,6 +770,14 @@ def build(out: Path, get, version: str, today: date | None = None, images: bool 
     write("members/", *members_index(states, slugs))
     write("states/", *states_index(states), nav="state.html")
     (out / "members" / "slugs.json").write_text(json.dumps(slugs, sort_keys=True), encoding="utf-8")
+    # ZIP code -> districts, for "Find your members by ZIP code": looked up in the reader's browser.
+    zips = get("/v1/zip-districts")
+    if zips and zips.get("zips"):
+        text = json.dumps(zips, separators=(",", ":"))
+        (out / "members" / "zip-districts.json").write_text(text, encoding="utf-8")
+        # Also gzipped: the finder unpacks it in the browser (no server setting needed).
+        (out / "members" / "zip-districts.json.gz").write_bytes(gzip.compress(text.encode(), mtime=0))
+        log(f"Wrote the ZIP code lookup ({len(zips['zips']):,} ZIP code areas, {zips['congress']}th Congress)")
 
     top = sorted(p.name for p in out.glob("*.html") if p.name not in ("search.html", "offline.html"))
     top = ["" if n == "index.html" else n for n in top]

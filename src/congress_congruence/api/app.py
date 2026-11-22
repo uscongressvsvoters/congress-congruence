@@ -109,6 +109,16 @@ def member_summary(row: dict) -> dict:
     }
 
 
+def contacts_for(ids: list[str]) -> dict[str, dict]:
+    """Website, contact form and Washington office of each serving member asked about."""
+    out = {}
+    for r in fetch(q.CONTACTS, {"ids": list(ids)}):
+        c = {k: r[k] for k in ("website", "contact_form", "phone", "address") if r[k]}
+        if c:
+            out[r["bioguide_id"]] = c
+    return out
+
+
 def pct(part: int, whole: int) -> float | None:
     return round(100 * part / whole, 1) if whole else None
 
@@ -403,14 +413,17 @@ def feedback(request: Request, data: dict = Body(...)):
 def members(response: Response,
             state: str | None = Query(None, min_length=2, max_length=2),
             chamber: str | None = Query(None, pattern="^(house|senate)$"),
-            include: str | None = Query(None, pattern="^former$")):
+            include: str | None = Query(None, pattern="^former$"),
+            contact: bool = False):
     if state is not None:
         state = state.upper()
         if state not in STATES:
             raise HTTPException(400, "Unknown state code")
     rows = fetch(q.CURRENT_MEMBERS, {"on": date.today(), "state": state, "chamber": chamber})
     rows.sort(key=lambda r: (r["chamber"] != "senate", r["state"], r["district"] or 0, r["last_name"]))
-    out = [member_summary(r) for r in rows]
+    contacts = contacts_for([r["bioguide_id"] for r in rows]) if contact else {}
+    out = [{**member_summary(r), **({"contact": contacts[r["bioguide_id"]]} if r["bioguide_id"] in contacts else {})}
+           for r in rows]
     if include == "former":     # members who have left office but have votes in the data loaded
         former = [r for r in fetch(q.FORMER_MEMBERS, {"on": date.today(), "state": state})
                   if chamber is None or r["chamber"] == chamber]
@@ -516,7 +529,33 @@ def member(bioguide_id: str, response: Response):
         "stats": stats,
         "service": service,
         "seats": seat_history(fetch(q.TERMS, {"id": bioguide_id}), date.today()),
+        **(member_contact(bioguide_id) if row["serving"] else {}),
     }
+
+
+def member_contact(bioguide_id: str) -> dict:
+    """How to reach a serving member: {"contact": {...}, "offices": [...]}, each only if known."""
+    out = {}
+    c = contacts_for([bioguide_id]).get(bioguide_id)
+    if c:
+        out["contact"] = c
+    offices = [{k: v for k, v in r.items() if v} for r in fetch(q.OFFICES, {"id": bioguide_id})]
+    if offices:
+        out["offices"] = offices
+    return out
+
+
+@app.get("/v1/zip-districts")
+def zip_districts(response: Response):
+    """Every ZIP code area and its congressional districts, for the site's static lookup file (the
+    site looks a reader's ZIP code up in their browser; this is fetched only when the site is built).
+    zips: {"77378": [["TX", 8, 100]], ...}: state, district (0 = at-large), percent of the land."""
+    rows = fetch(q.ZIP_DISTRICTS, {"on": date.today()})
+    zips: dict[str, list] = {}
+    for r in rows:
+        zips.setdefault(r["zcta"], []).append([r["state"], r["district"], round(100 * r["land_share"])])
+    response.headers["Cache-Control"] = CACHE
+    return {"congress": rows[0]["congress"] if rows else None, "zips": zips}
 
 
 @app.get("/v1/members/{bioguide_id}/votes")

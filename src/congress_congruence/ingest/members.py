@@ -1,7 +1,7 @@
 """Load members, terms and the ID crosswalk from the congress-legislators dataset.
 
 Source: https://github.com/unitedstates/congress-legislators
-Files used: legislators-current.yaml, legislators-historical.yaml
+Files used: legislators-current.yaml, legislators-historical.yaml, legislators-district-offices.yaml (offices)
 
 Usage:
     python -m congress_congruence.ingest.members <path to congress-legislators folder>
@@ -24,6 +24,8 @@ from .. import party as party_positions
 log = logging.getLogger(__name__)
 
 SOURCE_FILES = ("legislators-current.yaml", "legislators-historical.yaml")
+# State and district offices of serving members; optional (older checkouts may lack it).
+OFFICES_FILE = "legislators-district-offices.yaml"
 CHAMBER = {"rep": "house", "sen": "senate"}
 
 
@@ -33,6 +35,8 @@ class ParsedMembers:
     external_ids: list[tuple] = field(default_factory=list)
     terms: list[dict] = field(default_factory=list)
     duplicate_ids: list[tuple] = field(default_factory=list)
+    contacts: list[tuple] = field(default_factory=list)     # (bioguide, website, form, phone, address)
+    offices: list[tuple] = field(default_factory=list)
 
 
 def read_yaml(path: Path) -> list[dict]:
@@ -94,7 +98,26 @@ def parse(people: list[dict]) -> ParsedMembers:
                     (a["party"], a["start"], a["end"]) for a in t.get("party_affiliations", [])
                 ],
             })
+        # How to reach them: the latest term's office details. Only serving members' records carry them.
+        last = (person.get("terms") or [{}])[-1]
+        if any(last.get(k) for k in ("url", "contact_form", "phone", "address")):
+            out.contacts.append((bioguide, last.get("url"), last.get("contact_form"), last.get("phone"),
+                                 last.get("address")))
     return out
+
+
+def parse_offices(records: list[dict], known: set[str]) -> list[tuple]:
+    """State and district offices, one row each, for members we know."""
+    rows = []
+    for rec in records or []:
+        bio = (rec.get("id") or {}).get("bioguide")
+        if bio not in known:
+            continue
+        for o in rec.get("offices") or []:
+            if o.get("id") and (o.get("city") or o.get("address")):
+                rows.append((bio, o["id"], o.get("city"), o.get("state"), o.get("address"), o.get("suite"),
+                             o.get("building"), str(o["zip"]) if o.get("zip") else None, o.get("phone")))
+    return rows
 
 
 CORRECTIONS_FILE = Path(__file__).resolve().parents[3] / "config" / "term_corrections.yaml"
@@ -203,6 +226,15 @@ def load(conn, parsed: ParsedMembers) -> dict[str, int]:
                 )
                 n_party += 1
 
+        cur.execute("delete from core.member_contact")
+        cur.executemany("""insert into core.member_contact (bioguide_id, website, contact_form, phone, address)
+                           values (%s, %s, %s, %s, %s) on conflict (bioguide_id) do nothing""", parsed.contacts)
+        cur.execute("delete from core.member_office")
+        cur.executemany("""insert into core.member_office (bioguide_id, office_id, city, state, address, suite,
+                                                           building, zip, phone)
+                           values (%s, %s, %s, %s, %s, %s, %s, %s, %s) on conflict do nothing""",
+                        parsed.offices)
+
         # Which party each vote counts toward depends on the terms: if any changed, rework them all.
         if term_fingerprint(cur) != before:
             party_positions.refresh(cur)
@@ -212,6 +244,8 @@ def load(conn, parsed: ParsedMembers) -> dict[str, int]:
         "external_ids": len(parsed.external_ids),
         "terms": len(parsed.terms),
         "party_changes": n_party,
+        "contacts": len(parsed.contacts),
+        "offices": len(parsed.offices),
     }
 
 
@@ -228,6 +262,8 @@ def run(source_dir: Path, conn=None) -> dict[str, int]:
     for name in SOURCE_FILES:
         people += read_yaml(source_dir / name)
     parsed = parse(people)
+    if (source_dir / OFFICES_FILE).exists():
+        parsed.offices = parse_offices(read_yaml(source_dir / OFFICES_FILE), {m[0] for m in parsed.members})
     if CORRECTIONS_FILE.exists():
         for note in apply_corrections(parsed.terms, read_yaml(CORRECTIONS_FILE) or []):
             log.info(note)

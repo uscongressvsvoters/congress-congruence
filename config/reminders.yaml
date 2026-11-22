@@ -82,6 +82,18 @@ items:
       (logs/members.log), that the first House and Senate votes of the new Congress appear on
       All votes, and that departed members show under former members.
 
+  - id: zip-districts-120
+    title: Load the 120th Congress's ZIP code districts
+    due: 2026-12-28
+    lead_days: [7, 0]
+    details: |
+      Several states redrew their districts for the 2026 elections, so "Find your members by ZIP code"
+      needs the new lines when the 120th Congress begins on January 3. On the server:
+          python -m congress_congruence.ingest.zip_districts 120 && scripts/publish_web.sh both
+      The lookup switches to the 120th's districts on January 3 by itself. If the Census Bureau hasn't
+      published tab20_cd12020_zcta520_natl.txt yet (https://www2.census.gov/geo/docs/maps-data/data/rel2020/cd-sld/),
+      the 119th's lines stay in use; try again weekly and note it on the Sources page.
+
   - id: newsroom-pitches-2027
     title: Send the newsroom pitches for the new Congress
     due: 2027-01-12

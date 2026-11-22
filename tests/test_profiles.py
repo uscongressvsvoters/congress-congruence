@@ -49,6 +49,8 @@ def fake_api(path):
                              "respondents": 3000, "area_note": None,
                              "senate_votes": [{"bioguide_id": "C001098", "name": "Ted Cruz", "sided_with": "oppose",
                                                "match": "same", "agreement": "against"}]}]}
+    if path == "/v1/zip-districts":
+        return {"congress": 119, "zips": {"77378": [["TX", 8, 62], ["TX", 2, 38]]}}
     m = re.match(r"/v1/members/(\w+)(/\w+)?", path)
     mid, part = m.group(1), m.group(2)
     base = {"C001098": SEN, "F000001": REP, "F000002": FORMER}[mid]
@@ -124,6 +126,10 @@ def test_state_pages_index_and_sitemap(tmp_path):
     idx = (tmp_path / "members" / "index.html").read_text()
     assert '<a href="members/pat-fox-tx-f000002/">Pat Fox</a>' in idx
     assert json.loads((tmp_path / "members" / "slugs.json").read_text())["C001098"] == "ted-cruz"
+    import gzip
+    zips = json.loads(gzip.decompress((tmp_path / "members" / "zip-districts.json.gz").read_bytes()))
+    assert zips == json.loads((tmp_path / "members" / "zip-districts.json").read_text())
+    assert zips["zips"]["77378"] == [["TX", 8, 62], ["TX", 2, 38]]
     sm = (tmp_path / "sitemap.xml").read_text()
     for loc in ("https://uscongressvsvoters.org/", "https://uscongressvsvoters.org/about.html",
                 "https://uscongressvsvoters.org/members/ted-cruz/", "https://uscongressvsvoters.org/states/texas/"):

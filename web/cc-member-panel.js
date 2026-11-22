@@ -523,6 +523,21 @@
             h("a", { class: "people-src", href: `${siteBase}sources.html#population` }, "Census Bureau figures")));
         }
       }
+      // How to reach a serving member (the API sends these only for serving members).
+      const c = m.contact || {};
+      if (m.serving && (c.phone || c.website || c.contact_form)) {
+        const digits = (c.phone || "").replace(/\D/g, "").slice(-10);
+        const bits = [
+          c.phone ? (digits.length === 10 ? h("a", { href: `tel:+1${digits}` }, c.phone) : c.phone) : null,
+          c.contact_form ? h("a", { href: c.contact_form, rel: "noopener" }, "Email (contact form)") : null,
+          c.website ? h("a", { href: c.website, rel: "noopener" }, "Official website") : null,
+        ].filter(Boolean);
+        const offices = m.offices?.length;
+        parts.push(h("p", { class: "people contact" }, h("strong", {}, "Contact: "),
+          ...bits.flatMap((b, i) => i ? [" · ", b] : [b]),
+          offices && slug ? [" · ", h("a", { href: `${siteBase}members/${slug}/#contact` },
+            `${offices} office${offices === 1 ? "" : "s"} in the ${m.chamber === "senate" ? "state" : "district"}`)] : null));
+      }
       const jumps = [];
       if (this.opinion?.items?.length) {
         jumps.push(["compared", "Compared with constituents"]);

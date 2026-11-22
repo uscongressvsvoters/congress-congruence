@@ -3,6 +3,7 @@ title: Find your members
 description: See how your senators and representative voted, and how their votes compare with what people where they live told independent surveys.
 head: |
   <script src="cc-member-panel.js" defer></script>
+  <script src="zip-finder.js" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"US Congress vs Voters","url":"https://uscongressvsvoters.org/","description":"How members of Congress voted, compared with what the people they represent told independent surveys.","creator":{"@type":"Person","name":"John LeDuc"},"inLanguage":"en-US"}</script>
   <style>
     .pick { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 10px; margin: 0 0 20px; max-width: 40rem; }
@@ -18,10 +19,12 @@ head: |
 main_class: home
 ---
 <h1>How does your member of Congress vote, compared with the people they represent?</h1>
-<p class="intro">Search by name, state or seat (like TX-7) in the box at the top, or pick a state, then a senator or representative. You'll see their voting record and,
+<p class="intro">Enter your ZIP code, search by name, state or seat (like TX-7) in the box at the top, or pick a state, then a senator or representative. You'll see their voting record and,
   where independent surveys asked about a bill, how their vote lines up with what people where they live said.
   <a href="methods.html">How this works</a>.</p>
 <p class="coverage" data-coverage></p>
+
+<div class="zip-finder" data-zip-finder><p>Find your members by ZIP code: this needs JavaScript. You can pick your state below instead.</p></div>
 
 <div class="pick">
   <label>State

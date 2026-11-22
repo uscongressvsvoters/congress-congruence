@@ -58,6 +58,12 @@ def client():
                 for bio, pos in positions.items():
                     cur.execute("insert into core.member_vote (roll_call_id, bioguide_id, position, raw_position) "
                                 "values (%s, %s, %s, %s)", (rid, bio, pos, pos.title()))
+            cur.execute("""insert into core.member_contact (bioguide_id, website, phone, address)
+                           values ('D000001', 'https://dee.house.gov', '202-225-0001', '1 Longworth')""")
+            cur.execute("""insert into core.member_office (bioguide_id, office_id, city, state, phone)
+                           values ('D000001', 'D000001-austin', 'Austin', 'TX', '512-555-0100')""")
+            cur.executemany("insert into core.zip_district values (%s, %s, %s, %s, %s)",
+                            [(119, "78701", "TX", 1, 0.7), (119, "78701", "TX", 2, 0.3), (119, "99501", "AK", 0, 1.0)])
         c.commit()
 
     os.environ["API_DATABASE_URL"] = url
@@ -415,3 +421,16 @@ def test_reminders_calendar_only_at_its_private_address(client, monkeypatch):
     r = client.get("/v1/calendar/" + "t" * 32 + ".ics")
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/calendar")
     assert r.text.startswith("BEGIN:VCALENDAR") and r.headers["cache-control"] == "no-store"
+
+
+def test_contacts_and_zip_districts(client):
+    m = client.get("/v1/members/D000001").json()
+    assert m["contact"] == {"website": "https://dee.house.gov", "phone": "202-225-0001", "address": "1 Longworth"}
+    assert m["offices"] == [{"city": "Austin", "state": "TX", "phone": "512-555-0100"}]
+    assert "contact" not in client.get("/v1/members/D000002").json()
+    listed = {x["bioguide_id"]: x for x in client.get("/v1/members?state=TX&contact=true").json()["members"]}
+    assert listed["D000001"]["contact"]["phone"] == "202-225-0001" and "contact" not in listed["D000002"]
+    assert "contact" not in client.get("/v1/members?state=TX").json()["members"][0]
+    z = client.get("/v1/zip-districts").json()
+    assert z["congress"] == 119 and z["zips"]["78701"] == [["TX", 1, 70], ["TX", 2, 30]]
+    assert z["zips"]["99501"] == [["AK", 0, 100]]
