@@ -72,10 +72,16 @@ def test_refresh_loads_what_is_published_and_skips_the_rest(monkeypatch):
         def get(self, url, timeout):
             return Resp(url)
 
-    with db.connect(os.environ["TEST_DATABASE_URL"]) as c:
+    url = os.environ["TEST_DATABASE_URL"]
+    with db.connect(url) as c:
         with c.cursor() as cur:
             cur.execute("drop schema if exists core, history cascade")
         c.commit()
         db.migrate(c)
-        assert z.refresh(date(2026, 11, 22), conn=c, http=Http()) == [119]     # 120th not published yet
-        assert z.refresh(date(2026, 11, 29), conn=c, http=Http()) == []        # 119th already loaded
+    # As the weekly job runs it: refresh opens (and closes) its own connection.
+    monkeypatch.setattr(z.db, "connect", lambda: db.psycopg.connect(url))
+    assert z.refresh(date(2026, 11, 22), http=Http()) == [119]     # 120th not published yet
+    with db.psycopg.connect(url) as c, c.cursor() as cur:          # saved, not just seen by that connection
+        cur.execute("select count(distinct zcta) from core.zip_district where congress = 119")
+        assert cur.fetchone()[0] == 30001
+    assert z.refresh(date(2026, 11, 29), http=Http()) == []        # 119th already loaded

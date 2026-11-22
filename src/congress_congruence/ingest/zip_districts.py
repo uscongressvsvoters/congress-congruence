@@ -85,6 +85,9 @@ def run(congress: int = 119, conn=None, http=None) -> int:
             with cur.copy("copy core.zip_district (congress, zcta, state, district, land_share) from stdin") as cp:
                 for r in rows:
                     cp.write_row(r)
+        # The block above is only a savepoint if the caller's connection already had a transaction
+        # open (refresh() checks what's loaded first): commit so the rows are really saved.
+        conn.commit()
     finally:
         if own:
             conn.close()
