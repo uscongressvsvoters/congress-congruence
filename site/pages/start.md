@@ -168,13 +168,21 @@ doesn't take a side.
 medieval Europe. In 1188, the Cortes of León, in what is now Spain, brought elected representatives of
 towns and cities to the king's council alongside nobles and clergy. UNESCO calls its decrees the oldest
 known written record of the European parliamentary system
-([UNESCO](https://en.unesco.org/memoryoftheworld/registry/251)). England's Parliament began summoning
-elected knights and townsmen in 1265. Representatives in these early assemblies often arrived with
-written instructions from the people who sent them. That raised the question this section is about: is
+([UNESCO](https://en.unesco.org/memoryoftheworld/registry/251)). In 1265, England's Parliament
+summoned knights from each county and representatives from major towns
+([UK National Archives](https://www.nationalarchives.gov.uk/education/resources/magna-carta/montforts-parliament/)).
+Town representatives in the Spanish Cortes and other early assemblies often arrived bound by
+instructions from the people who sent them, a custom historians call the "imperative mandate"
+([Holden, *American Political Science Review*, 1930](https://www.cambridge.org/core/journals/american-political-science-review/article/imperative-mandate-in-the-spanish-cortes-of-the-middle-ages/70BDB3EB59904B955D6F02573519B02A)).
+That raised the question this section is about: is
 a representative a messenger who carries the community's wishes, or someone trusted to decide?
 
-The American colonies inherited both the assemblies and the argument. Virginia's elected assembly first
-met in 1619, and New England towns often sent their representatives written instructions. Then:
+The American colonies inherited both the assemblies and the argument. Virginia's General Assembly
+first met at Jamestown on July 30, 1619, with two burgesses elected from each settlement
+([National Park Service](https://home.nps.gov/jame/learn/historyculture/the-first-legislative-assembly.htm)).
+New England town meetings sent their representatives written instructions: in 1765, Boston and
+Braintree, Massachusetts, instructed theirs to oppose the Stamp Act
+([Papers of John Adams](https://founders.archives.gov/documents/Adams/06-01-02-0054-0001)). Then:
 
 - **1789:** while drafting the Bill of Rights, the House voted 10 to 41 against adding a right of the
   people "to instruct their representatives." Those against it said members meeting from every state
@@ -187,7 +195,7 @@ met in 1619, and New England towns often sent their representatives written inst
   legislature's instructions to vote to erase the Senate's censure of President Andrew Jackson
   ([Encyclopedia Virginia](https://encyclopediavirginia.org/entries/tyler-john-1790-1862/)).
 - **1913:** the 17th Amendment let voters elect senators directly, which ended instructions from
-  legislatures.
+  legislatures ([U.S. Senate](https://www.senate.gov/about/origins-foundations/senate-and-constitution/seventeenth-amendment.htm)).
 
 Today no instruction binds a member of Congress. Voters have their formal say at elections, and the
 argument continues in campaigns, letters, calls and polls.
@@ -199,7 +207,9 @@ Two classic views
   vote against a clear majority at home is a failure of representation.
 - **Trustee:** a representative should use their own judgment about what's best, even when it differs
   from the majority at home, and answer for it at the next election. The British statesman Edmund
-  Burke made this argument in 1774, describing Parliament as "a deliberative assembly of one nation."
+  Burke made this argument to the voters of Bristol in 1774, rejecting "authoritative instructions" and
+  describing Parliament as "a deliberative assembly of one nation"
+  ([Burke's speech](https://press-pubs.uchicago.edu/founders/print_documents/v1ch13s7.html)).
 
 Many scholars see most members as somewhere in between: following constituents on issues people
 follow closely, and using their own judgment on others. The site shows the comparison; whether a
