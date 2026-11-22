@@ -161,7 +161,38 @@ member's office.
 
 ## Should members follow the people they represent? {#follow}
 
-People have disagreed about this for centuries, and this site doesn't take a side. Two classic views
+People have argued about this for as long as there have been elected representatives, and this site
+doesn't take a side.
+
+**A question older than the United States.** Electing people to speak for a community goes back to
+medieval Europe. In 1188, the Cortes of León, in what is now Spain, brought elected representatives of
+towns and cities to the king's council alongside nobles and clergy. UNESCO calls its decrees the oldest
+known written record of the European parliamentary system
+([UNESCO](https://en.unesco.org/memoryoftheworld/registry/251)). England's Parliament began summoning
+elected knights and townsmen in 1265. Representatives in these early assemblies often arrived with
+written instructions from the people who sent them. That raised the question this section is about: is
+a representative a messenger who carries the community's wishes, or someone trusted to decide?
+
+The American colonies inherited both the assemblies and the argument. Virginia's elected assembly first
+met in 1619, and New England towns often sent their representatives written instructions. Then:
+
+- **1789:** while drafting the Bill of Rights, the House voted 10 to 41 against adding a right of the
+  people "to instruct their representatives." Those against it said members meeting from every state
+  had to be free to deliberate and compromise
+  ([House debate, August 15, 1789](https://teachingamericanhistory.org/resource/house-debates/0815-2)).
+- **1790s to 1913:** state legislatures chose U.S. senators, and often instructed them how to vote. In
+  1791, Virginia's legislature directed its senators to vote to open the Senate's closed sessions to
+  the public ([U.S. Senate](https://www.senate.gov/artandhistory/history/minute/Constituent_Complaints.htm)).
+- **1836:** Senator John Tyler of Virginia, later president, resigned rather than follow his
+  legislature's instructions to vote to erase the Senate's censure of President Andrew Jackson
+  ([Encyclopedia Virginia](https://encyclopediavirginia.org/entries/tyler-john-1790-1862/)).
+- **1913:** the 17th Amendment let voters elect senators directly, which ended instructions from
+  legislatures.
+
+Today no instruction binds a member of Congress. Voters have their formal say at elections, and the
+argument continues in campaigns, letters, calls and polls.
+
+Two classic views
 ([Stanford Encyclopedia of Philosophy](https://plato.stanford.edu/entries/political-representation/)):
 
 - **Delegate:** a representative should vote the way the people they represent want. On this view, a

@@ -16,6 +16,10 @@ Follow these and every correction in a feed reader: [updates feed (RSS)](feed.xm
 
 **November 22, 2026**
 
+- **A short history of representation.** [Start here](start.html#follow) now traces the question of
+  whether members should follow the people they represent: from medieval assemblies in Spain and
+  England, through the American colonies, the House's 1789 vote against a right to instruct
+  representatives, and state legislatures instructing senators until 1913.
 - **How districts are drawn.** [Start here](start.html#districts) now explains apportionment and
   redistricting: why district lines change every ten years after the census, who draws them, why some
   states redraw in between, and what that means for the comparisons on this site. The
