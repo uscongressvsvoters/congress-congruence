@@ -102,5 +102,17 @@ Party majority {#party-majority}
 :   The position (Yea or Nay) most members of a party took on a vote. Independents are counted with the
     party they caucus with.
 
+Apportionment {#apportionment}
+:   Dividing the House's 435 seats among the states by population after each census, every ten years.
+    Every state gets at least one seat. See [How districts are drawn](start.html#districts).
+
+Redistricting {#redistricting}
+:   Drawing new congressional district lines within a state, so each district has about the same number
+    of people. It happens after each census, and sometimes in between when a state or a court redraws.
+    New lines take effect when a new Congress begins. See [How districts are drawn](start.html#districts).
+
+Gerrymandering {#gerrymandering}
+:   Drawing district lines to favor one party or group. What counts as gerrymandering is often disputed.
+
 Bioguide ID {#bioguide-id}
 :   The official ID Congress gives each member, such as C001098. It appears in this site's web addresses.

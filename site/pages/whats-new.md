@@ -16,6 +16,10 @@ Follow these and every correction in a feed reader: [updates feed (RSS)](feed.xm
 
 **November 22, 2026**
 
+- **How districts are drawn.** [Start here](start.html#districts) now explains apportionment and
+  redistricting: why district lines change every ten years after the census, who draws them, why some
+  states redraw in between, and what that means for the comparisons on this site. The
+  [Glossary](glossary.html#redistricting) has short definitions.
 - **Contact your members.** Every serving member's page now lists their official website, contact form,
   Washington phone number and their offices back home, and [Start here](start.html#contact) explains
   how to reach them. **Find your members by ZIP code**, on the home page and Start here, shows your

@@ -101,6 +101,50 @@ question that Congress also voted on, the result shows what that state's voters 
 - **Public opinion.** Members watch polls and surveys of the people they represent, which is what
   this site compares their votes with.
 
+## How districts are drawn {#districts}
+
+Each representative serves one district, and every district in a state has about the same number of
+people. Senators always represent their whole state. District lines change on a regular cycle, and
+sometimes in between.
+
+**Every ten years, after the census.**
+
+1. **The census counts everyone** living in the United States, as of April 1 of each year ending in 0.
+2. **The 435 House seats are divided among the states** by population (called **apportionment**).
+   Every state gets at least one. The number of seats has been fixed by law at 435 since 1929, so when
+   some states grow faster than others, seats move between states.
+3. **Each state draws its new districts** (called **redistricting**), so that every district has nearly
+   the same population, as the Supreme Court has required since *Wesberry v. Sanders* (1964). Federal law,
+   including the Voting Rights Act, sets other limits.
+4. **The new lines are used in the next election,** in a year ending in 2, and the members elected
+   take office in January of the year ending in 3. The last cycle took effect in 2023; the next is
+   expected in 2033.
+
+**Who draws the lines.** In most states, about 39, the state legislature draws the congressional map,
+usually with the governor able to veto it. About eight states use an independent commission and three
+use a commission of elected officials. Six states have only one representative, so there are no
+district lines to draw ([Loyola Law School](https://redistricting.lls.edu/who-draws-the-lines/)).
+
+**Sometimes in between.** Nothing in federal law stops a state from redrawing mid-decade, and courts
+can order new maps when a map breaks the law. Several states adopted new congressional maps for the
+2026 elections, including California, Florida, Louisiana, North Carolina, Ohio, Tennessee, Texas and
+Utah. Those take effect with the Congress that begins in January 2027. The
+[National Conference of State Legislatures](https://www.ncsl.org/redistricting-and-census/changing-the-maps-tracking-mid-decade-redistricting)
+keeps a current list.
+
+**Gerrymandering** is drawing district lines to favor one party or group. Both major parties have
+been accused of it, and what counts as fair is often disputed. The Supreme Court ruled in 2019
+(*Rucho v. Common Cause*) that federal courts can't decide claims of partisan gerrymandering; state
+courts can, under their own state constitutions, and some states have turned the job over to
+commissions for that reason.
+
+**What it means on this site.** Each member is compared with the people in their district as it was
+drawn on the day of the vote. When lines change, a member's district can get a new number or new
+territory. Each member's page lists every district they've represented,
+[Members by the numbers](numbers.html) shows when their current district began, and the
+[ZIP code finder](#contact) uses the current Congress's lines, switching on the day a new Congress
+begins.
+
 ## Contact your members {#contact}
 
 Your two senators and your representative work for everyone where you live, whether or not you voted
