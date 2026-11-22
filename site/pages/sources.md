@@ -285,7 +285,9 @@ congressional districts and ZIP Code Tabulation Areas, the Census Bureau's area 
 Many ZIP codes cross district lines; the lookup shows each district that holds at least 1% of the ZIP
 code's land, with its share. Some ZIP codes, such as P.O. boxes, have no area of their own. To check by
 full address, use [the House's lookup](https://www.house.gov/representatives/find-your-representative).
-District lines are the current Congress's, updated when a new Congress begins.
+District lines are the current Congress's. They change when a new Congress begins: for every state after
+each census, and in between where states redraw. The new lines are loaded as soon as the Census Bureau
+publishes them, and used from the day the new Congress begins.
 
 ## Other surveys: their status {#not-used}
 

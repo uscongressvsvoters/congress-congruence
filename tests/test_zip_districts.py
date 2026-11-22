@@ -40,3 +40,42 @@ def test_member_page_contact_section():
     assert '<h2 id="contact">Contact</h2>' in html and "Tell your representative what you think" in html
     assert 'href="tel:+12022250000"' in html and "Offices in the district (1)" in html and "Conroe" in html
     assert bp.contact_html({**m, "serving": False}) == []
+
+
+def test_current_congress_turns_over_on_january_3():
+    from datetime import date
+    assert z.current_congress(date(2026, 11, 22)) == 119
+    assert z.current_congress(date(2027, 1, 2)) == 119
+    assert z.current_congress(date(2027, 1, 3)) == 120
+    assert z.current_congress(date(2025, 1, 3)) == 119
+
+
+def test_refresh_loads_what_is_published_and_skips_the_rest(monkeypatch):
+    import os
+    import pytest
+    import requests
+    if not os.environ.get("TEST_DATABASE_URL"):
+        pytest.skip("TEST_DATABASE_URL not set")
+    from datetime import date
+    from congress_congruence import db
+    body = "\n".join([HEAD] + [row("4808", f"{10000 + i:05d}", 100) for i in range(30001)]) + "\n"
+
+    class Resp:
+        def __init__(self, url):
+            self.url, self.status_code = url, 200 if "cd11920" in url else 404
+            self.content = body.encode()
+        def raise_for_status(self):
+            if self.status_code != 200:
+                raise requests.HTTPError(response=self)
+
+    class Http:
+        def get(self, url, timeout):
+            return Resp(url)
+
+    with db.connect(os.environ["TEST_DATABASE_URL"]) as c:
+        with c.cursor() as cur:
+            cur.execute("drop schema if exists core, history cascade")
+        c.commit()
+        db.migrate(c)
+        assert z.refresh(date(2026, 11, 22), conn=c, http=Http()) == [119]     # 120th not published yet
+        assert z.refresh(date(2026, 11, 29), conn=c, http=Http()) == []        # 119th already loaded

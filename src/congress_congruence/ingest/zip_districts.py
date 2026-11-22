@@ -1,7 +1,8 @@
 """Which congressional district each ZIP code is in, for the site's "Find your members by ZIP code".
 
-    python -m congress_congruence.ingest.zip_districts            # the current Congress's districts (119th)
-    python -m congress_congruence.ingest.zip_districts 120        # once the Census publishes the 120th's
+    python -m congress_congruence.ingest.zip_districts            # load the current and next Congress if
+                                                                  # published and not loaded yet (weekly job)
+    python -m congress_congruence.ingest.zip_districts 120        # load (or reload) one Congress's file
 
 Source: the Census Bureau's relationship file between congressional districts and 2020 ZIP Code
 Tabulation Areas (ZCTAs), https://www2.census.gov/geo/docs/maps-data/data/rel2020/cd-sld/ (file
@@ -13,14 +14,20 @@ holds at least 1% of its land (or its largest one), with that share.
 The site turns the table into one static file (zip-districts.json, written by scripts/build_profiles.py):
 a reader's ZIP code is looked up in their own browser and is never sent to the server.
 
-Run it again for each new Congress whose district lines changed: the next is the 120th (January 2027),
-for the states that redrew their districts for the 2026 elections.
+District lines change when a new Congress begins (January 3 after an election): for every state after
+each census (the next in 2033), and in between wherever courts or legislatures redraw (as several states
+did for the 120th Congress, January 2027). The Census Bureau publishes a file for each new Congress,
+usually months ahead. The weekly job (scripts/run_job.sh zip-districts) loads it as soon as it appears;
+the API serves a Congress's lines from the day it begins, and the weekly page rebuild publishes them.
 """
 
 import csv
 import io
 import logging
 import sys
+from datetime import date
+
+import requests
 
 from .. import db
 from .population import FIPS
@@ -86,13 +93,50 @@ def run(congress: int = 119, conn=None, http=None) -> int:
     return zctas
 
 
+def current_congress(day: date) -> int:
+    """The Congress in session on a day (each begins January 3 of an odd year: 2 * n + 1787)."""
+    year = day.year if (day.month, day.day) >= (1, 3) else day.year - 1
+    return (year - 1787) // 2
+
+
+def refresh(today: date | None = None, conn=None, http=None) -> list[int]:
+    """Load the current and the next Congress's files, if published and not loaded yet."""
+    today = today or date.today()
+    own = conn is None
+    conn = conn or db.connect()
+    loaded = []
+    try:
+        for congress in (current_congress(today), current_congress(today) + 1):
+            with conn.cursor() as cur:
+                cur.execute("select 1 from core.zip_district where congress = %s limit 1", (congress,))
+                if cur.fetchone():
+                    continue
+            try:
+                run(congress, conn=conn, http=http)
+                loaded.append(congress)
+            except requests.HTTPError as e:
+                if e.response is not None and e.response.status_code == 404:
+                    log.info("The %dth Congress's ZIP code file isn't published yet", congress)
+                    continue
+                raise
+    finally:
+        if own:
+            conn.close()
+    if not loaded:
+        log.info("ZIP code districts are up to date")
+    return loaded
+
+
 def main(argv: list[str]) -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     args = argv[1:]
     if len(args) > 1 or (args and not args[0].isdigit()):
         print(__doc__)
         return 2
-    run(int(args[0]) if args else 119)
+    if args:
+        run(int(args[0]))
+    else:
+        refresh()
     return 0
 
 

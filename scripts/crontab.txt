@@ -39,3 +39,6 @@
 
 # Vote watch: daily after the morning vote loads, emails new votes that may affect a survey match or note.
 45 12 * * *     $HOME/congress-congruence/scripts/run_job.sh vote-watch
+
+# ZIP code districts: Mondays, loads a new Congress's district lines once the Census Bureau publishes them.
+15 8 * * 1      $HOME/congress-congruence/scripts/run_job.sh zip-districts

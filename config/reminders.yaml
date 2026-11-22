@@ -83,17 +83,15 @@ items:
       All votes, and that departed members show under former members.
 
   - id: zip-districts-120
-    title: Load the 120th Congress's ZIP code districts
+    title: Check the 120th Congress's ZIP code districts loaded
     due: 2026-12-28
-    lead_days: [7, 0]
+    lead_days: [0]
     details: |
-      Several states redrew their districts for the 2026 elections, so "Find your members by ZIP code"
-      needs the new lines when the 120th Congress begins on January 3. On the server:
-          python -m congress_congruence.ingest.zip_districts 120 && scripts/publish_web.sh both
-      The lookup switches to the 120th's districts on January 3 by itself. If the Census Bureau hasn't
-      published tab20_cd12020_zcta520_natl.txt yet (https://www2.census.gov/geo/docs/maps-data/data/rel2020/cd-sld/),
-      the 119th's lines stay in use; try again weekly and note it on the Sources page.
-
+      Several states redrew their districts for the 2026 elections. The weekly zip-districts job loads
+      the 120th Congress's ZIP code file as soon as the Census Bureau publishes it, and the lookup
+      switches to it on January 3. Check logs/zip-districts.log for "Loaded ... for the 120th Congress".
+      If it says the file isn't published yet, nothing needs doing: the 119th's lines stay in use until
+      it appears (https://www2.census.gov/geo/docs/maps-data/data/rel2020/cd-sld/).
   - id: newsroom-pitches-2027
     title: Send the newsroom pitches for the new Congress
     due: 2027-01-12
