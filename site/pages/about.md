@@ -12,6 +12,7 @@ votes compare with what people where they live told independent surveys.</p>
 Many sites track how Congress votes. Fewer show whether those votes match what constituents want. When
 independent surveys ask people about the same bills Congress votes on, the two can be put side by side,
 state by state and district by district. This site does that, openly and the same way for everyone.
+New to how Congress represents voters? [Start here](start.html).
 
 ## Our rules {#rules}
 

@@ -107,6 +107,7 @@ def wrap(frame: str, settings: dict, meta: dict, body_html: str, name: str, vers
             .replace("{{slug}}", slug or Path(name).stem)
             .replace("{{main_class}}", main_class)
             .replace("{{nav}}", nav_html(name))
+            .replace("{{start_current}}", ' aria-current="page"' if name == "start.html" else "")
             .replace("{{features_current}}", ' aria-current="page"' if name == "features.html" else "")
             .replace("{{numbers_current}}", ' aria-current="page"' if name == "numbers.html" else "")
             .replace("{{install_current}}", ' aria-current="page"' if name == "install.html" else "")

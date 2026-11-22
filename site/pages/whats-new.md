@@ -8,11 +8,18 @@ description: Everything added to US Congress vs Voters, newest first - new surve
 <a href="upcoming.html">Upcoming changes</a>. Every change that corrected a figure is in the
 <a href="corrections.html">corrections log</a>.</p>
 
-*Last updated November 21, 2026.*
+*Last updated November 22, 2026.*
 
 Follow these and every correction in a feed reader: [updates feed (RSS)](feed.xml).
 
 ## Recently added {#recent}
+
+**November 22, 2026**
+
+- **Start here.** A new page, linked from the top of every page, explains why this site exists and how
+  representation works: why voters elect members of Congress rather than voting on federal bills
+  themselves, where voters do decide laws directly, and the long-running debate over how closely
+  members should follow the people they represent. See [Start here](start.html).
 
 **November 21, 2026**
 

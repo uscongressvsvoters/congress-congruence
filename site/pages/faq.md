@@ -28,11 +28,19 @@ calculated by fixed code from published data, and the code is public so anyone c
 More on the [About](about.html#how-built) page, and the full story on
 [How this site was built](how-built.html).
 
+## Why can't voters vote on the bills themselves? {#why-not-vote}
+
+The Constitution gives the power to make federal laws to Congress: voters elect members, and members
+vote on bills. There's no national ballot for bills, though about half the states let voters decide
+some state laws directly. [Start here](start.html) explains how representation works, why this site
+exists, and the debate over how closely members should follow the people they represent.
+
 ## Does "voted against the majority" mean a member did something wrong? {#wrong}
 
 No. Members weigh many things: their own judgment, the details of a bill, what they promised voters,
 and their party. A vote against a majority can be a principled one. The site shows the comparison and
-leaves the judgment to you.
+leaves the judgment to you. [Start here](start.html#follow) covers the two classic views of what
+representatives owe the people they represent.
 
 ## How do you know what people in my district think? {#how-estimated}
 

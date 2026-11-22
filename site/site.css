@@ -36,6 +36,10 @@ a:hover { color: var(--mark); }
 .header-btns { display: inline-flex; flex-wrap: wrap; gap: 6px; }
 .features-btn:hover, .features-btn:focus-visible { background: var(--mark); color: var(--surface); }
 .features-btn[aria-current="page"] { background: var(--mark); color: var(--surface); }
+/* "Start here": the one filled button, so a first-time visitor finds it before anything else. */
+.start-btn { background: var(--mark); color: var(--surface); }
+.start-btn:hover, .start-btn:focus-visible { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.start-btn[aria-current="page"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--mark); }
 /* Not needed once the site is running as the installed app. */
 @media (display-mode: standalone) { .app-btn { display: none; } }
 html.installed-app .app-btn { display: none; }
