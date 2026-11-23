@@ -142,6 +142,11 @@ comparison names its source. When sources agree, that's worth knowing; when they
 - Surveys ask about a small number of bills, so each member is compared on a handful of votes, not their
   whole record.
 - A survey measures opinion at one moment; a vote may come months earlier or later.
+- Surveys reach only the people who answer them, and most respondents are rewarded for taking part.
+  Each survey weights its answers to match the Census on traits such as age, sex, race and education,
+  but weighting can't correct differences it doesn't measure, and the 90% range doesn't cover them.
+  [Sources](sources.html#who-answered) says how each survey found its respondents and shows who
+  answered, group by group, beside the Census.
 - Members weigh many things besides opinion polls: their own judgment, the details of a bill, their
   party, and what they promised voters. Voting against a majority isn't necessarily wrong, and this site
   doesn't say it is. It shows the comparison so you can judge.

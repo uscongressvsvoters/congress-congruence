@@ -119,13 +119,19 @@ def survey_file(tmp_path):
     rows = []
     for fips, cd, p_support, n in ((48, 1, 0.9, 300), (48, 2, 0.1, 300), (56, 1, 0.5, 200)):
         for _ in range(n):
-            row = {"inputstate": fips, "cdid119": cd, "commonweight": random.uniform(0.5, 1.5)}
+            row = {"inputstate": fips, "cdid119": cd, "commonweight": random.uniform(0.5, 1.5),
+                   # Who answered: Texans are women born 1990 with a degree; Wyomingites men born 1950.
+                   "birthyr": 1990 if fips == 48 else 1950, "gender4": 2 if fips == 48 else 1,
+                   "educ": 5 if fips == 48 else 2}
             for item in ITEMS:
                 row[item] = 1 if random.random() < p_support else 2
             rows.append(row)
-    rows.append({"inputstate": 48, "cdid119": 1, "commonweight": 1.0, **{i: 8 for i in ITEMS}})  # skipped all
+    rows.append({"inputstate": 48, "cdid119": 1, "commonweight": 1.0, **{i: 8 for i in ITEMS},  # skipped all
+                 "birthyr": 1990, "gender4": 8, "educ": 5})
     path = tmp_path / "CES25_Common.dta"
-    pyreadstat.write_dta(pd.DataFrame(rows), str(path))
+    pyreadstat.write_dta(pd.DataFrame(rows), str(path), variable_value_labels={
+        "gender4": {1: "Man", 2: "Woman", 3: "Non-binary", 4: "Other", 8: "skipped"},
+        "educ": {1: "No HS", 2: "High school graduate", 3: "Some college", 4: "2-year", 5: "4-year", 6: "Post-grad"}})
     return path
 
 
@@ -157,6 +163,14 @@ def test_load_estimates_every_state_and_district(conn, survey_file):
     assert by[("TX", 2)] == ("oppose", 300)
     assert by[("WY", 0)][1] == 200                                 # at-large: cdid 1 mapped to seat 0
     assert by[("TX", None)][1] == 600                              # skipped answers left out
+    # Who answered: no race column in this file, so race isn't shown; the skipped sex answer is left out.
+    with conn.cursor() as cur:
+        cur.execute("""select area, dimension, grp, respondents, raw_share from core.survey_respondent_profile
+                        where survey = 'CES 2025'""")
+        prof = {(a, d, g): (n, sh) for a, d, g, n, sh in cur.fetchall()}
+    assert prof[("TX", "sex", "female")] == (600, 1.0) and prof[("TX", "age", "35_44")] == (601, 1.0)
+    assert prof[("WY", "age", "65_plus")] == (200, 1.0) and prof[("US", "education", "ba_plus")] == (601, 0.7503)
+    assert not any(d == "race" for _, d, _ in prof) and summary["respondent_profile_rows"] == len(prof)
     # Re-loading replaces rather than duplicates.
     ces.load(conn, 2025, survey_file)
     with conn.cursor() as cur:
@@ -302,3 +316,26 @@ def test_api_reports_surveyed_and_residents_per_area(client, conn):
     assert all(i["constituents"]["residents"] == 770000 for i in house["items"])
     senate = client.get("/v1/members/S000001/opinion").json()
     assert senate["samples"][0]["surveyed"] == 600 and senate["samples"][0]["residents"] == 31000000
+
+
+def test_api_who_answered_beside_the_census(conn, client):
+    with conn.cursor() as cur:
+        cur.executemany("insert into core.adult_profile (acs_year, area, dimension, grp, adults, share, source) "
+                        "values (%s, %s, %s, %s, %s, %s, %s)",
+                        [(2024, "TX", "sex", "female", 110, 0.505, "ACS 2024 1-year estimates"),
+                         (2024, "TX", "sex", "male", 108, 0.495, "ACS 2024 1-year estimates"),
+                         (2019, "TX", "sex", "female", 1, 0.5, "ACS 2019 1-year estimates")])
+    conn.commit()
+    tx = client.get("/v1/states/TX").json()["respondent_profiles"]
+    assert [p["survey"] for p in tx] == ["CES 2025"]
+    p = tx[0]
+    assert (p["census_year"], p["census_source"]) == (2024, "ACS 2024 1-year estimates")   # nearest before 2025
+    assert [d["dimension"] for d in p["dimensions"]] == ["sex", "age", "education"]
+    sex = p["dimensions"][0]
+    assert sex["people"] == 600 and sex["groups"][0] == {"group": "female", "respondents": 600, "raw_pct": 100.0,
+                                                          "weighted_pct": 100.0, "census_pct": 50.5}
+    assert sex["groups"][1]["census_pct"] == 49.5 and sex["groups"][1]["respondents"] == 0
+    us = client.get("/v1/respondents").json()
+    assert us["area"] == "US" and us["surveys"][0]["census_year"] is None      # no national Census rows loaded
+    assert us["surveys"][0]["dimensions"][2]["groups"][2]["raw_pct"] == 75.0
+    assert client.get("/v1/respondents", params={"area": "ZZ"}).status_code == 404

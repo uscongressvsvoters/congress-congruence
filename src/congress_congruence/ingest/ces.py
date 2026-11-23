@@ -429,21 +429,24 @@ def house_seats(conn, year: int) -> dict[str, list[int]]:
     return {st: d for st, d in seats.items() if st in STATE_FIPS.values() and st != "DC"}
 
 
+def state_of(st_code) -> str | None:
+    """A FIPS number in most years; the postal code itself in 2006 ("NC")."""
+    if isinstance(st_code, str) and len(st_code.strip()) == 2 and st_code.strip().isalpha():
+        st = st_code.strip().upper()
+        return st if st in STATE_FIPS.values() else None
+    try:
+        return STATE_FIPS.get(int(st_code))
+    except (TypeError, ValueError):
+        return None
+
+
 def responses_for(df, var: str, state_col: str, dist_col: str, weight_col: str,
                   seats: dict[str, list[int]]) -> list[tuple]:
     out = []
     for st_code, cd, ans, w in zip(df[state_col], df[dist_col], df[var], df[weight_col]):
         if ans not in (SUPPORT, OPPOSE) or w != w or w is None:   # skipped / not asked / missing weight
             continue
-        # A FIPS number in most years; the postal code itself in 2006 ("NC").
-        if isinstance(st_code, str) and len(st_code.strip()) == 2 and st_code.strip().isalpha():
-            st = st_code.strip().upper()
-            st = st if st in STATE_FIPS.values() else None
-        else:
-            try:
-                st = STATE_FIPS.get(int(st_code))
-            except (TypeError, ValueError):
-                st = None
+        st = state_of(st_code)
         if not st or st == "DC":
             continue
         if seats.get(st) == [0]:
@@ -460,10 +463,10 @@ def responses_for(df, var: str, state_col: str, dist_col: str, weight_col: str,
 
 
 def load(conn, year: int, local_file: Path | None = None) -> dict:
-    from .. import opinion
+    from .. import opinion, respondents
     cfg = load_config(year)
     path = find_data_file(year, local_file)
-    columns, labels, _, nrows = read_metadata(path)
+    columns, labels, value_labels, nrows = read_metadata(path)
     weight_col = next((w for w in cfg["weight_preference"] if w in columns), None)
     if not weight_col:
         raise ValueError(f"None of the weight columns {cfg['weight_preference']} are in {path.name}")
@@ -471,7 +474,10 @@ def load(conn, year: int, local_file: Path | None = None) -> dict:
     missing = [v for v in cfg["items"] if v not in columns]
     if missing:
         raise ValueError(f"Items not in the data file: {missing}")
-    df = read_columns(path, [cfg["state_column"], cfg["district_column"], weight_col] + items)
+    demo = respondents.pick_columns(columns, cfg.get("demographics"))
+    respondents.report_missing(cfg["survey"], demo, value_labels)
+    base = [cfg["state_column"], cfg["district_column"], weight_col]
+    df = read_columns(path, list(dict.fromkeys(base + items + list(demo.values()))))
     seats = house_seats(conn, year)
     links = link(conn, year, cfg)
     from . import district_profile
@@ -516,6 +522,10 @@ def load(conn, year: int, local_file: Path | None = None) -> dict:
                 if a.district is not None:
                     counts[a.majority] += 1
         summary["district_calls"] = counts
+        # Who answered: respondents by sex, age, race and education, for the nation and each state.
+        profile = respondents.profile(df, demo, respondents.read_labels(value_labels, demo), weight_col,
+                                      [state_of(v) for v in df[cfg["state_column"]]], year)
+        summary["respondent_profile_rows"] = respondents.save(cur, survey, profile, int(cfg.get("census_year", year)))
     return summary
 
 

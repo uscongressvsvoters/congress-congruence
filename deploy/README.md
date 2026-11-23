@@ -327,6 +327,29 @@ python -m congress_congruence.ingest.ballots load 2024
 sudo systemctl restart congress-api && scripts/publish_web.sh
 ```
 
+## Who answered each survey (respondents beside the Census)
+
+Adds Census adults by sex, age, race and education, and recomputes each survey's respondents by the same
+groups (this happens on `load`; the estimates themselves should come out unchanged). Census years 2012 on cover the CES years
+with these questions (2012-2025) and Nationscape (2019); a year the Census hasn't released is reported
+and skipped. Reloading every CES year takes a while, so it runs in the background.
+
+```bash
+cd ~/congress-congruence && git pull && source .venv/bin/activate
+python -m congress_congruence.db migrate                          # 017: who answered, Census adults
+python -m congress_congruence.ingest.adult_profile 2012 2025
+python -m congress_congruence.ingest.nationscape load
+YEARS=$(python -c "from congress_congruence import db; print(*[r[0].split()[-1] for r in db.connect().execute(\"select survey from core.survey where organization = 'Cooperative Election Study'\")])")
+echo $YEARS                                                       # the CES years already on the site
+nohup sh -c "for y in $YEARS; do python -m congress_congruence.ingest.ces load \$y; done" > logs/who_answered.log 2>&1 &
+tail -f logs/who_answered.log                                     # Ctrl+C stops watching, not the load
+sudo systemctl restart congress-api && scripts/publish_web.sh both
+```
+
+Only CES years already on the site are reloaded. Years before 2012 number their
+columns, so they show no table until `demographics:` is set in their item file (docs/DATA_SOURCES.md 6b).
+After this, the monthly watcher loads each new Census release's adult figures with the population.
+
 ## Member and state pages, sitemap and link previews
 
 `scripts/publish_web.sh` also builds a plain page for every member (`/members/<name>/`) and state

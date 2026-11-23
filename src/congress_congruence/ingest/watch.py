@@ -265,18 +265,39 @@ def check_census(conn, http=None) -> list[str]:
     latest = latest_acs_year(conn)
     if latest is None:
         return []                                   # nothing loaded yet: done by hand first
+    msgs = catch_up_adults(conn, latest, http)      # e.g. last month's adults load failed
     year = latest + 1
     try:
         population.fetch(year, "state:*", None, http)
     except requests.HTTPError:
-        return []                                   # not released yet
+        return msgs                                 # not released yet
     except RuntimeError as e:
         if "free key" in str(e):
             raise                                   # a real problem: surface it as an error
-        return []                                   # Census answers unreleased years with a message
+        return msgs                                 # Census answers unreleased years with a message
     result = population.load(conn, year, http)
-    return [f"Loaded Census population from {result['source']} ({result['congress']}th Congress district lines): "
-            f"{result['districts']} districts, {result['states']} states. Nothing to review."]
+    return msgs + [f"Loaded Census population from {result['source']} ({result['congress']}th Congress district lines): "
+            f"{result['districts']} districts, {result['states']} states. Nothing to review."] \
+        + catch_up_adults(conn, year, http)
+
+
+def catch_up_adults(conn, year: int, http=None) -> list[str]:
+    """Census adults by sex, age, race and education (beside who answered each survey) for `year`,
+    if they're set up (loaded by hand once) and that year isn't in yet. A failure is reported and
+    tried again next month."""
+    with conn.cursor() as cur:
+        cur.execute("select max(acs_year) from core.adult_profile")
+        have = cur.fetchone()[0]
+    conn.commit()
+    if have is None or have >= year:
+        return []
+    from . import adult_profile
+    try:
+        done = adult_profile.load(conn, year, http)
+    except Exception as e:                          # population is unaffected; say what to rerun
+        return [f"Census adults by group for {year} didn't load ({e}); it will be tried again next month, or run "
+                f"python -m congress_congruence.ingest.adult_profile {year}"]
+    return [f"Loaded Census adults by group from ACS {year} ({done['areas']} areas)."]
 
 
 # Each source: (check function, "review" if a person must act, "info" if it only reports).

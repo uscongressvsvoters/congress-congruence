@@ -103,6 +103,7 @@ addEventListener("DOMContentLoaded", () => {
       sec.append(el("h3", { class: "org-head" }, org, " ", el("small", { class: "meta" }, plural(os.length, "question", "questions"))));
       const bySurvey = new Map();
       for (const o of os) bySurvey.set(o.source.title, [...(bySurvey.get(o.source.title) || []), o]);
+      const who = new Map((d.respondent_profiles || []).map(p => [p.survey, p]));
       for (const [title, qs] of bySurvey) sec.append(el("details", { class: "more survey-fold" },
         el("summary", {}, `${title} (${qs.length})`),
         el("div", { class: "table-scroll" }, el("table", { class: "data-table" },
@@ -119,7 +120,9 @@ addEventListener("DOMContentLoaded", () => {
                 el("span", { class: "party" }, s.party ? ` (${s.party[0]})` : ""), `: ${POS[s.position] || s.position}`,
                 s.match === "related" ? el("span", { class: "meta" }, " · related vote, not counted")
                   : [" · ", el("span", { class: `verdict ${s.agreement}` }, VERDICT[s.agreement] || s.agreement)])))
-              : el("span", { class: "meta" }, "No Senate vote compared")))))))));
+              : el("span", { class: "meta" }, "No Senate vote compared"))))))),
+        // Who answered this survey in the state, beside the Census (site.js).
+        who.has(qs[0].survey) && window.CCWho ? window.CCWho.render(who.get(qs[0].survey), d.state) : null));
     }
     return sec;
   }

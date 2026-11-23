@@ -116,18 +116,27 @@ def weeks(tmp_path):
     limits it to 2020). TX-1 mostly agrees, TX-2 mostly disagrees; 'Not sure' (999) is dropped."""
     random.seed(3)
     labels = {"guns_bg": {1: "Agree", 2: "Disagree", 999: "Not Sure"},
-              "impeach": {1: "Agree", 2: "Disagree", 999: "Not Sure"}}
+              "impeach": {1: "Agree", 2: "Disagree", 999: "Not Sure"},
+              "gender": {1: "Female", 2: "Male"},
+              "race_ethnicity": {1: "White", 2: "Black, or African American", 4: "Asian (Chinese)"},
+              "hispanic": {1: "Not Hispanic", 2: "Mexican"},
+              "education": {4: "High school graduate", 6: "Completed some college, but no degree",
+                            8: "College Degree (such as B.A., B.S.)"}}
     for name, with_impeach in (("ns20190718", False), ("ns20200102", True)):
         rows = []
         for st, cd, p, n in (("TX", "TX01", 0.9, 150), ("TX", "TX02", 0.1, 150), ("NC", "NC01", 0.5, 100),
                              ("WY", "WYAL", 0.5, 60)):
             for _ in range(n):
                 row = {"state": st, "congress_district": cd, "weight": random.uniform(0.5, 1.5),
-                       "guns_bg": 1 if random.random() < p else 2}
+                       "guns_bg": 1 if random.random() < p else 2,
+                       # Who answered: TX respondents are all women; everyone is 40, white, not Hispanic.
+                       "age": 40, "gender": 1 if st == "TX" else 2, "race_ethnicity": 1, "hispanic": 1,
+                       "education": 8 if st == "WY" else 4}
                 if with_impeach:
                     row["impeach"] = 1 if random.random() < p else 2
                 rows.append(row)
-        rows.append({"state": "TX", "congress_district": "TX01", "weight": 1.0, "guns_bg": 999,
+        rows.append({"state": "TX", "congress_district": "TX01", "weight": 1.0, "guns_bg": 999, "age": 70,
+                     "gender": 2, "race_ethnicity": 1, "hispanic": 2, "education": 6,
                      **({"impeach": 999} if with_impeach else {})})
         folder = tmp_path / name
         folder.mkdir()
@@ -153,11 +162,23 @@ def test_load_pools_weeks_and_skips_nc_districts_for_117th_votes(conn, weeks, mo
     assert ("guns_bg_2021", "NC", 1) not in by and ("guns_bg_2021", "NC", None) in by   # NC: state only
     assert by[("guns_bg_2021", "TX", 1)] == by[("guns_bg", "TX", 1)]
     assert by[("impeach", "TX", 1)][1] == 150                     # second week only
+    # Who answered, for the nation and each state (every respondent of both weeks, "Not sure" included).
+    with conn.cursor() as cur:
+        cur.execute("""select area, dimension, grp, respondents, raw_share, census_year
+                         from core.survey_respondent_profile where survey = %s""", (CFG["survey"],))
+        prof = {(a, d, g): (n, s, y) for a, d, g, n, s, y in cur.fetchall()}
+    assert prof[("US", "sex", "female")][0] == 2 * 300 and prof[("TX", "sex", "female")][:2] == (600, 0.9967)
+    assert prof[("TX", "sex", "male")][:2] == (2, 0.0033) and prof[("WY", "education", "ba_plus")][1] == 1.0
+    assert prof[("TX", "race", "hispanic")][0] == 2 and prof[("US", "race", "white")][0] == 2 * 460
+    assert prof[("US", "age", "65_plus")][0] == 2 and prof[("US", "age", "35_44")][0] == 2 * 460
+    assert {y for *_, y in prof.values()} == {2020}                     # CFG sets no census_year
     # Re-loading replaces rather than duplicates.
     ns.load(conn, weeks)
     with conn.cursor() as cur:
         cur.execute("select count(*) from core.opinion_estimate where survey = %s", (CFG["survey"],))
         assert cur.fetchone()[0] == len(by)
+        cur.execute("select count(*) from core.survey_respondent_profile where survey = %s", (CFG["survey"],))
+        assert cur.fetchone()[0] == len(prof)
 
 
 def test_load_stops_on_a_missing_question(conn, weeks, monkeypatch):

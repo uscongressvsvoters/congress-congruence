@@ -32,6 +32,9 @@ Full details of every source and its special handling: `docs/DATA_SOURCES.md`
 - Opinion: CES 2024 and 2025 (respondent data, partial pooling, `opinion.py`);
   PPC 2026 Battlegrounds (published per-area results from PDFs, `ingest/ppc.py`).
 - Population: Census ACS 1-year (2023 = 118th lines, 2024 = 119th lines).
+- Who answered (Nov 23, 2026; awaiting load on the server): CES and Nationscape respondents by sex,
+  age, race and education beside Census adults (ACS 2012 on), per state and nationwide
+  (docs/DATA_SOURCES.md 6b). Sources says how each survey found and rewarded respondents.
 - Watcher (monthly): new CES releases are drafted for review; new Census releases load automatically.
 
 ## Email

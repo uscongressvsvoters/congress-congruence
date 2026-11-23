@@ -212,6 +212,16 @@ and question each comes from, and the vote. Differences from CES:
 
 The panel shows one with/against line per survey organization (`by_source` in the API).
 
+## Who answered each survey (Census adults)
+
+```bash
+python -m congress_congruence.ingest.adult_profile 2012 2025   # adults by sex, age, race, education
+```
+
+Census adults in the nation and each state by sex, age, race and ethnicity, and education, shown beside
+who answered each survey with respondent files (CES, Nationscape; computed on `load` by
+`respondents.py`). Context only: no estimate changes. See docs/DATA_SOURCES.md 6b.
+
 ## Residents per area (Census)
 
 ```bash

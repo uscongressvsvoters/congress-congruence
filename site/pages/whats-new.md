@@ -8,11 +8,22 @@ description: Everything added to US Congress vs Voters, newest first - new surve
 <a href="upcoming.html">Upcoming changes</a>. Every change that corrected a figure is in the
 <a href="corrections.html">corrections log</a>.</p>
 
-*Last updated November 22, 2026.*
+*Last updated November 23, 2026.*
 
 Follow these and every correction in a feed reader: [updates feed (RSS)](feed.xml).
 
 ## Recently added {#recent}
+
+**November 23, 2026**
+
+- **Who answered each survey.** [Sources](sources.html#who-answered) now says how each survey found its
+  respondents: from online panels people sign up to, or by inviting only people chosen at random. It
+  also says how respondents are rewarded and what the answers are weighted to, and explains what
+  weighting can't correct. For the Cooperative Election Study and Nationscape, a new table shows who
+  answered by sex, age, race and ethnicity, and education, both as counted and after the survey's
+  weights, beside each group's share of adults according to the Census. The table is on Sources for
+  the whole country and on each state's page for that state. For the other surveys, Sources links to
+  their own published tables. [Methods](methods.html#limits) lists this among the site's limits.
 
 **November 22, 2026**
 

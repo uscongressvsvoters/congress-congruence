@@ -241,6 +241,8 @@ House district (`cdid119` for 2025, `cdid118` for 2024), survey weights, and ans
 - This is simpler than full MRP (multilevel regression with poststratification), which
   would also use district demographics and past election results.
 
+**Who answered** (sex, age, race, education beside the Census): computed at load; see 6b.
+
 **Exact wording.** "See the exact question" links to the survey guide on Dataverse, which
 the loader finds automatically. Readers search it for the item's code (e.g. `CC25_340a`).
 
@@ -412,6 +414,8 @@ Special handling:
   (postal code), `congress_district` (like `TX07`), `weight`. Codes 1 Agree, 2 Disagree, 999 Not sure,
   888 Not asked.
 - **Code:** `ingest/nationscape.py` (`inspect`, `link`, `load`), item file `config/nationscape_items.yaml`.
+- **Who answered** (sex, age, race, education beside the Census, 2019): computed at load from the
+  weeks read; see 6b.
   Downloading, vote matching and the estimates reuse the CES loader and `opinion.estimate`.
 - **Loaded as one survey**, "Nationscape 2019-2021", pooling every week a question was asked
   (`asked_from` / `asked_to` in the item file can narrow that).
@@ -537,6 +541,51 @@ nothing, results matched v1.1.
   each state with the smallest and largest states. DC and Puerto Rico are left out of both.
 - **Key problems.** A missing or rejected key is reported as a clear error, not a confusing
   redirect.
+
+## 6b. Who answered each survey: respondents beside Census adults
+
+Readers asked how we know the people who answered a survey are like the people who live where they
+do. For the two sources with respondent files, the site shows who answered, group by group, beside
+the Census. For the others, Sources says how they found people and links to their own tables.
+
+| | |
+|---|---|
+| Respondents | Computed by `ces load` and `nationscape load` from each person's answers (`respondents.py`), stored in `core.survey_respondent_profile` (sql/017) |
+| Census | ACS 1-year, tables B15001 (sex by age by education, 18+) and B01001H/B/D/I (adults by race and ethnicity), `ingest/adult_profile.py`, stored in `core.adult_profile` |
+| Fetched | `adult_profile <year>` (or a range) by hand; afterwards the monthly watcher loads each new release with the population |
+| Shown | `/v1/respondents?area=US` (Sources page, nationwide) and `/v1/states/{code}` (`respondent_profiles`, on each state page) |
+
+- **Groups.** Sex (female, male; "other" answers such as non-binary are shown with no Census figure),
+  age (18-34, 35-44, 45-64, 65+), race and ethnicity (Hispanic of any race, then white, Black, Asian
+  and other, each not Hispanic), and education (high school or less, some college or an associate
+  degree, bachelor's or more).
+- **Read from value labels**, not codes: "Woman", "4-year", "Asian (Chinese)", "Not Hispanic" and so on
+  are sorted by the label text, so the code works across CES years and Nationscape. Skipped, refused and
+  "not asked" answers are left out of that group's shares. Anyone who said they are Hispanic is
+  counted as Hispanic, whatever race they chose. Age comes from the birth year (CES: survey year minus
+  `birthyr`) or the `age` column (Nationscape).
+- **Columns** are found by name (`birthyr`/`age`, `gender4`/`gender`, `race`/`race_ethnicity`,
+  `hispanic`, `educ`/`education`); an item file can name others under `demographics:` (e.g. for the
+  2006-2011 CES files, whose columns are numbered, which aren't set yet). A missing column is logged and
+  that group is left out. People with no usable weight are left out.
+- **Three figures per group:** respondents counted once (`raw_share`, with the count), after the
+  survey's weights (`weighted_share`), and the group's share of the area's adults (Census).
+- **Census year:** the survey's year (an item file can set `census_year`; Nationscape uses 2019). The
+  API uses the latest ACS year loaded that isn't later, else the earliest loaded. No 2020 release.
+- **Census caveats.** "Other" race is all adults minus the four groups. The Census's Black and Asian
+  counts include the few people who are also Hispanic, whom the surveys count as Hispanic, so the
+  Census "other" share can be slightly low (never below zero). The page says so. A cell the Census
+  withholds (blank or a negative code) is never read as zero: an area missing a race table cell gets no
+  race rows, and one missing a B15001 cell gets no sex, age or education rows (logged).
+- **States and the nation only.** Survey weights are built for the nation and states, and districts
+  have a few dozen CES respondents each, so there are no district tables.
+- **Not counted in anything.** These tables are context, not an adjustment: they change no estimate
+  or score.
+- **How each source found people** (opt-in or random recruitment, incentives, weighting targets) is
+  on the Sources page, with links to each source's methodology: CES (Tufts methodology page and
+  FAQ), PPC (publicconsultation.org/methodology), Nationscape (2021 methodology and
+  representativeness report; it doesn't say how respondents were rewarded), Texas Politics Project
+  (each poll's page and crosstabs in its archive), UNH (panel FAQ; release PDFs).
 
 ## 7. Keeping sources current
 

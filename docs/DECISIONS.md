@@ -54,3 +54,14 @@ in `DATA_SOURCES.md`; current status is in `../PROJECT_NOTES.md`.
 19. **The setup is summarized in `docs/system_info.xlsx`**, by ID and status (see its About tab), in
     the same format as the maintainer's other projects, so anyone picking up the project sees every
     decided and open item in one place.
+
+## 23 November 2026
+
+20. **Show who answered each survey.** A reviewer asked how readers can tell whether the people who
+    answered (mostly online, mostly rewarded for taking part) are like the people who live there. Sources
+    now says how each survey found and rewarded its respondents and what weighting can't correct. For
+    surveys with respondent files (CES, Nationscape), each state and the nation get a table of who
+    answered by sex, age, race and education: as counted, after the survey's weights, and beside the
+    Census. This is visible data, not an adjustment: no estimate or score changes. There are no district
+    tables, because survey weights are built for states and the nation and districts have too few
+    respondents.

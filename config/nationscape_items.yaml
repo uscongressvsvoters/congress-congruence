@@ -23,6 +23,9 @@ district_lines_also: [117]
 state_column: state
 district_column: congress_district
 weight_column: weight
+# Who answered (sex, age, race, education) is compared with the Census's 2019 figures; the columns are
+# found by name (age, gender, race_ethnicity, hispanic, education; see respondents.py).
+census_year: 2019
 
 source:
   title: Democracy Fund + UCLA Nationscape, 2019-2021

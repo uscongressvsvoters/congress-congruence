@@ -33,7 +33,7 @@ import zipfile
 from datetime import date
 from pathlib import Path
 
-from .. import config
+from .. import config, respondents
 from . import ces
 from .votes import http_session
 
@@ -201,6 +201,7 @@ def read_weeks(folder: Path, cfg: dict):
     wanted = {item_column(v, it) for v, it in cfg["items"].items()}
     base = [cfg["state_column"], cfg["district_column"], cfg["weight_column"]]
     frames, codes, labels, seen = [], {}, {}, set()
+    demo_labels: dict[str, dict] = {}            # value labels of the demographic columns (who answered)
     for week, path in weeks:
         _, meta = pyreadstat.read_dta(str(path), metadataonly=True)
         cols = set(meta.column_names)
@@ -216,7 +217,11 @@ def read_weeks(folder: Path, cfg: dict):
             found = answer_codes((meta.variable_value_labels or {}).get(c, {}))
             if found and c not in codes:
                 codes[c] = found
-        df, _ = pyreadstat.read_dta(str(path), usecols=base + here, apply_value_formats=False)
+        demo = respondents.pick_columns(cols, cfg.get("demographics"))
+        for c in demo.values():                   # merged across weeks, in case a week lacks them
+            demo_labels.setdefault(c, {}).update((meta.variable_value_labels or {}).get(c) or {})
+        use = list(dict.fromkeys(base + here + list(demo.values())))
+        df, _ = pyreadstat.read_dta(str(path), usecols=use, apply_value_formats=False)
         df["_week"] = week
         frames.append(df)
     missing = sorted(wanted - seen)
@@ -229,7 +234,9 @@ def read_weeks(folder: Path, cfg: dict):
     if no_codes:
         raise ValueError(f"No Agree/Disagree labels found for {no_codes}; set `answers: {{support: <code>, "
                          "oppose: <code>}}` for them in the item file")
-    return pd.concat(frames, ignore_index=True), codes, labels, [w for w, _ in weeks]
+    df = pd.concat(frames, ignore_index=True)
+    df.attrs["demographic_labels"] = demo_labels
+    return df, codes, labels, [w for w, _ in weeks]
 
 
 # ---------------------------------------------------------------- inspect
@@ -348,6 +355,13 @@ def load(conn, folder: Path | None = None) -> dict:
                      a.support, a.low, a.high, a.majority, method))
                 if a.district is not None:
                     counts[a.majority] += 1
+        # Who answered: respondents by sex, age, race and education, for the nation and each state.
+        demo = respondents.pick_columns(df.columns, cfg.get("demographics"))
+        respondents.report_missing(cfg["survey"], demo, df.attrs.get("demographic_labels", {}))
+        profile = respondents.profile(df, demo, df.attrs.get("demographic_labels", {}), cfg["weight_column"],
+                                      [state_code(v) for v in df[cfg["state_column"]]], int(cfg.get("census_year", 2020)))
+        summary["respondent_profile_rows"] = respondents.save(cur, cfg["survey"], profile,
+                                                              int(cfg.get("census_year", 2020)))
     summary["district_calls"] = counts
     return summary
 

@@ -715,3 +715,19 @@ TERMS_FOR = """
 select bioguide_id, chamber, state, district, party, caucus, start_date, end_date
   from core.term where bioguide_id = any(%(ids)s) order by bioguide_id, start_date
 """
+
+# ---------------------------------------------------------------- who answered (sql/017_respondent_profile.sql)
+# Respondents by sex, age, race and education for one area ('US' or a state), every survey that has them.
+RESPONDENT_PROFILE = """
+select p.survey, coalesce(s.organization, s.survey) as organization, s.title, s.fielded, s.asked,
+       p.dimension, p.grp, p.respondents, p.raw_share, p.weighted_share, p.census_year
+  from core.survey_respondent_profile p
+  join core.survey s on s.survey = p.survey
+ where p.area = %(area)s
+ order by coalesce(s.organization, s.survey), p.survey desc
+"""
+
+# Adults in the same area by the same groups, every Census year loaded.
+ADULT_PROFILE = """
+select acs_year, dimension, grp, share, source from core.adult_profile where area = %(area)s
+"""

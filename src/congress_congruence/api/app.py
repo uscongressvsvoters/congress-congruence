@@ -14,6 +14,7 @@ Endpoints (GET unless marked):
     /v1/votes/{roll_call_id}           one vote and every member's position on it
     /v1/compare?a=&b=                  two members: votes they both cast, and where they split
     /v1/states/{code}                  a state's members, their surveyed-vote counts, statewide survey results
+    /v1/respondents?area=US            who answered each survey (sex, age, race, education) beside the Census
     /v1/members?state=TX&chamber=house members serving today (&include=former adds those who've left)
     /v1/members/{bioguide_id}          profile, attendance, votes with party majority
     /v1/members/{bioguide_id}/votes    most recent votes (limit=1..100, default 20)
@@ -42,6 +43,7 @@ from psycopg_pool import ConnectionPool
 from .. import config  # noqa: F401  (loads .env)
 from ..ingest.ppc import STATE_NAMES as ppc_states
 from ..ingest.votes import current_session
+from ..respondents import GROUPS, nearest_year
 from . import feedback as fb
 from .titles import tidy
 from . import queries as q
@@ -906,6 +908,48 @@ def numbers(response: Response, congress: int | None = None, chamber: str | None
     return {"congress": congress, "chamber": chamber, "as_of": as_of, "congresses": available, "members": members}
 
 
+def respondent_profiles(area: str) -> list[dict]:
+    """Who answered each survey in an area ('US' or a state): for each sex, age, race and education
+    group, the people who answered (count and share), their share after the survey's weights, and
+    the group's share of the area's adults from the nearest Census year loaded."""
+    census: dict[int, dict] = {}
+    for r in fetch(q.ADULT_PROFILE, {"area": area}):
+        census.setdefault(r["acs_year"], {"source": r["source"], "shares": {}})["shares"][(r["dimension"], r["grp"])] = r["share"]
+    out: dict[str, dict] = {}
+    for r in fetch(q.RESPONDENT_PROFILE, {"area": area}):
+        p = out.get(r["survey"])
+        if p is None:
+            year = nearest_year(r["census_year"], sorted(census))
+            p = out[r["survey"]] = {
+                "survey": r["survey"], "organization": r["organization"], "title": r["title"], "fielded": r["fielded"],
+                "asked": r["asked"], "census_year": year, "census_source": census[year]["source"] if year else None,
+                "dimensions": {}}
+        cen = census[p["census_year"]]["shares"] if p["census_year"] else {}
+        share = cen.get((r["dimension"], r["grp"]))
+        p["dimensions"].setdefault(r["dimension"], []).append({
+            "group": r["grp"], "respondents": r["respondents"],
+            "raw_pct": round(100 * r["raw_share"], 1),
+            "weighted_pct": None if r["weighted_share"] is None else round(100 * r["weighted_share"], 1),
+            "census_pct": None if share is None else round(100 * share, 1)})
+    for p in out.values():
+        dims = p.pop("dimensions")
+        order = lambda d: list(GROUPS).index(d)   # noqa: E731
+        p["dimensions"] = [{"dimension": d, "people": sum(g["respondents"] for g in gs),
+                            "groups": sorted(gs, key=lambda g: GROUPS[d].index(g["group"]) if g["group"] in GROUPS[d] else 99)}
+                           for d, gs in sorted(dims.items(), key=lambda kv: order(kv[0]))]
+    return list(out.values())
+
+
+@app.get("/v1/respondents")
+def respondents(response: Response, area: str = Query("US", min_length=2, max_length=2)):
+    """Who answered each survey (Sources page: area=US; a state's page uses /v1/states)."""
+    area = area.upper()
+    if area != "US" and area not in STATES:
+        raise HTTPException(404, "Unknown area: use US or a state code")
+    response.headers["Cache-Control"] = CACHE
+    return {"area": area, "surveys": respondent_profiles(area)}
+
+
 @app.get("/v1/states/{code}")
 def state(code: str, response: Response):
     """A state: its members today and those who've left (with votes on this site), each with their
@@ -948,4 +992,5 @@ def state(code: str, response: Response):
         "former": [{**member_summary(r), "left_office": r["end_date"], "scores": scores.get(r["bioguide_id"], [])}
                    for r in former],
         "opinion": opinion,
+        "respondent_profiles": respondent_profiles(code),
     }

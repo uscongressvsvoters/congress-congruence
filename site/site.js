@@ -194,6 +194,68 @@
   }
 })();
 
+// Who answered a survey, beside the Census: one table per survey, for the nation (Sources page,
+// <div data-who-answered="<organization>">) or a state (the state page calls CCWho.render).
+(() => {
+  const LABELS = {
+    sex: ["Sex", { female: "Women", male: "Men", other: "Another answer (e.g. non-binary)" }],
+    age: ["Age", { "18_34": "18 to 34", "35_44": "35 to 44", "45_64": "45 to 64", "65_plus": "65 and over" }],
+    race: ["Race and ethnicity", { hispanic: "Hispanic (any race)", white: "White, not Hispanic", black: "Black, not Hispanic",
+                                   asian: "Asian, not Hispanic", other: "Another race, or more than one" }],
+    education: ["Education", { hs_or_less: "High school or less", some_college: "Some college or an associate degree",
+                               ba_plus: "Bachelor's degree or more" }],
+  };
+  const make = (tag, attrs, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) n.setAttribute(k, v);
+    for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) n.append(k);
+    return n;
+  };
+  const pct = v => v === null || v === undefined ? "–" : `${v.toFixed(1).replace(/\.0$/, "")}%`;
+  const where = area => area === "US" ? "the country" : "the state";
+
+  // p: one survey from /v1/respondents or /v1/states (dimensions with groups); area: "US" or a state code.
+  function render(p, area) {
+    const people = Math.max(...p.dimensions.map(d => d.people));
+    const census = p.census_year ? `Adults living in ${where(area)} (Census, ${p.census_year})` : "Adults living there (Census)";
+    // Narrow screens: short headings; the full meaning is in the note under the table.
+    const table = make("table", { class: "data-table who-table" },
+      make("thead", {}, make("tr", {}, make("th", { scope: "col" }, "Group"), make("th", { scope: "col" }, census),
+        make("th", { scope: "col" }, "Answered (people)"), make("th", { scope: "col" }, "After weighting"))),
+      p.dimensions.map(d => make("tbody", {},
+        make("tr", { class: "who-dim" }, make("th", { scope: "rowgroup", colspan: "4" }, LABELS[d.dimension]?.[0] || d.dimension,
+          make("span", { class: "meta" }, ` · ${d.people.toLocaleString()} answered`))),
+        d.groups.map(g => make("tr", {},
+          make("th", { scope: "row" }, LABELS[d.dimension]?.[1][g.group] || g.group),
+          make("td", {}, g.census_pct === null ? make("span", { class: "meta" }, "not counted separately") : pct(g.census_pct)),
+          make("td", {}, pct(g.raw_pct), make("div", { class: "meta" }, g.respondents.toLocaleString())),
+          make("td", {}, pct(g.weighted_pct)))))));
+    const notes = make("p", { class: "meta" },
+      "“Answered” counts each person once (the number of people is under each share). “After weighting” is the ",
+      "mix the survey's own weights give, which its figures and our estimates use. The weights can only correct for traits like these ",
+      "that were measured; they can't make up for people who answered differing in other ways (for example, being ",
+      "more interested in politics). ",
+      p.census_year ? `Census figures are adults 18 and over (${p.census_source}); its counts of Black and Asian ` +
+        "adults include the few who are also Hispanic, whom the surveys count as Hispanic. " : "Census figures aren't loaded yet. ",
+      people < 300 ? `Only ${people.toLocaleString()} people here answered, so these shares are rough. ` : "",
+      make("a", { href: "sources.html#who-answered" }, "How respondents were found"), ".");
+    return make("details", { class: "more who-answered" },
+      make("summary", {}, `Who answered ${p.title || p.survey}${area === "US" ? ", nationwide" : " here"} (${people.toLocaleString()} people)`),
+      make("div", { class: "table-scroll" }, table), notes);
+  }
+  window.CCWho = { render };
+
+  const boxes = document.querySelectorAll("[data-who-answered]");
+  if (!boxes.length) return;
+  fetch("/api/v1/respondents?area=US").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(({ surveys }) => {
+    for (const box of boxes) {
+      const mine = surveys.filter(s => s.organization === box.getAttribute("data-who-answered"));
+      box.replaceChildren(...(mine.length ? mine.map(p => render(p, "US"))
+        : [make("p", { class: "note" }, "Not loaded yet.")]));
+    }
+  }).catch(() => { for (const box of boxes) box.replaceChildren(make("p", { class: "note" }, "This couldn't be loaded just now.")); });
+})();
+
 // The installed app (added to a home screen): a Back button, since there's no browser bar, and the
 // offline helper (sw.js), which keeps copies of viewed pages on this device only.
 (() => {

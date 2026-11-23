@@ -114,6 +114,31 @@ We only compare a vote with a survey question when both are about the same propo
 [Methods](methods.html) for how votes and questions are matched. Other surveys we've looked at, and why
 each is or isn't used yet, are listed [below](sources.html#not-used).
 
+### How people were found, and who answered {#who-answered}
+
+**Most respondents are rewarded for taking part.** Almost every survey here is done online, and nearly
+all of them give respondents points, gift cards, small cash payments or a chance to win a prize. That
+is normal for modern polling, and it doesn't make a survey wrong by itself. What matters is who ends up
+answering, and whether the survey corrects for it.
+
+**How people get into a survey differs.** Some sources take people who signed up to an online panel
+(an *opt-in* panel). Others invite only people chosen at random, by phone, text or mail, so no one
+can volunteer. Each source below says which.
+
+**Weighting, and what it can't fix.** Every survey here *weights* its answers. People from groups that
+answered less often count a little more, so the total matches the Census on age, sex, race, education
+and similar traits. Weighting can only correct traits that were measured. If the people who answered
+differ in other ways (for example, if they follow politics more closely than their neighbors), the
+weights can't fix that. The 90% range shown with each estimate covers the sampling error. It doesn't
+cover this kind of error.
+
+**See for yourself.** For the two surveys whose answers are published person by person (the
+Cooperative Election Study and Nationscape), we count who answered by sex, age, race and ethnicity,
+and education. We show each group three ways: as counted, after the survey's weights, and its share of
+adults living there according to the Census. The nationwide tables are below. Each state's page has the
+same table for that state, under "What people told surveys". The other sources publish only their
+results, so we link to their own tables instead.
+
 ### Cooperative Election Study {#cooperative-election-study}
 
 **Who runs it:** a consortium of universities led by Harvard University and Tufts University, fielded by
@@ -128,6 +153,18 @@ year it asks whether people support specific actions Congress has voted on.
 **What we use:** each person's state, House district and answers, with the survey's own weights.
 House districts have only a few dozen respondents each, so we estimate each district's opinion with
 help from statewide answers; see [Methods](methods.html#estimates-ces).
+
+**How people were found:** YouGov draws a random sample of U.S. adults from Census data, then matches
+each person in it to the most similar member of its online opt-in panel. Some respondents are recruited
+through online ads or another survey company. YouGov panel members earn points for each survey, which
+they can exchange for gift cards and other rewards. The answers are weighted on gender, age, race,
+Hispanic origin and education, then on voter registration, vote choice and other traits
+([methodology](https://tischcollege.tufts.edu/research-faculty/research-centers/cooperative-election-study/about-methodology);
+[FAQ](https://cces.gov.harvard.edu/frequently-asked-questions.md)).
+
+**Who answered, nationwide** (each state's page has its own table):
+
+<div data-who-answered="Cooperative Election Study"><p class="note">Loading…</p></div>
 
 **Data:** published openly on [Harvard Dataverse](https://dataverse.harvard.edu/dataverse/cces).
 
@@ -151,6 +188,17 @@ Respondents come from online panels and are weighted to Census figures.
 [vop.org](https://vop.org/battlegrounds-aggregate/), with each sample's size and margin of error.
 Only members from the states and districts it surveyed get these comparisons.
 
+**How people were found:** from several online opt-in panels, including Cint, Dynata and Prodege.
+The answers are weighted to the Census on age, race, ethnicity, gender, education, household income,
+marital status and home ownership, with party affiliation checked against voter registration data
+([survey pages](https://vop.org/battlegrounds-aggregate/)). Groups that tend to respond less are
+invited more often, and respondents are offered cash or cash-equivalent incentives
+([methodology](https://publicconsultation.org/methodology/)).
+
+**Who answered:** the program publishes its results and methods but not who answered by group, so there
+is no table of respondents here. Each state's and district's sample size and response rate are on its
+page at [vop.org](https://vop.org/battlegrounds-aggregate/).
+
 **Loaded on this site:**
 
 <div data-surveys="Program for Public Consultation"><p class="note">Loading the list…</p></div>
@@ -172,6 +220,18 @@ congressional district. Districts are as drawn for the 116th Congress (2019-2020
 also used everywhere except North Carolina, so North Carolina's representatives are compared only on
 votes from 2019-2020.
 
+**How people were found:** from Lucid, a market-research platform that sends people from online
+panels to the survey, with quotas on age, gender, race and ethnicity, region, income and education.
+Everyone had to pass an attention check. The answers are weighted to the Census's adult population on
+gender, region, race, Hispanic ethnicity, income, education, age, language, place of birth and
+urban or rural home, and to the 2016 presidential vote. The project's methodology report doesn't say
+how respondents were rewarded
+([methodology and representativeness report](https://www.voterstudygroup.org/uploads/reports/Data/Nationscape-Methodology-Representative-Assessment-2021Dec.pdf)).
+
+**Who answered, nationwide** (each state's page has its own table):
+
+<div data-who-answered="Democracy Fund + UCLA Nationscape"><p class="note">Loading…</p></div>
+
 **Loaded on this site:**
 
 <div data-surveys="Democracy Fund + UCLA Nationscape"><p class="note">Loading the list…</p></div>
@@ -192,6 +252,17 @@ that a Senate vote answers, with each poll's margin of error. "Neither" and "don
 left out, as with every survey here. The polls cover Texas only, so only Texas's two senators get these
 comparisons; House districts have too few respondents. Each question links to the poll's published
 results.
+
+**How people were found:** YouGov interviews members of its online opt-in panel and picks those who
+best match a sample of Texas registered voters drawn from Census data, on gender, age, race and
+education. YouGov panel members earn points they can exchange for rewards
+([YouGov panel](https://yougov.com/en-us/about/panel)). The answers are weighted on age, gender,
+race and ethnicity, education, home ownership and the 2024 presidential vote. Each poll's methods are
+on its page in the [polling data archive](https://texaspolitics.utexas.edu/polling-data-archive).
+
+**Who answered:** each poll's published crosstabs show its results by gender, race, age, education and
+other groups, and each poll's data file can be downloaded, both from the
+[polling data archive](https://texaspolitics.utexas.edu/polling-data-archive).
 
 **Data:** the project makes its results and data [available for public use](https://texaspolitics.utexas.edu/polling-data-archive).
 
@@ -218,6 +289,17 @@ with each poll's margin of error, widened by the design effect where the poll re
 know" answers are left out. Results are statewide, so they're compared with each state's two senators,
 and with Vermont's one House member (an at-large seat covering the whole state); never with members for
 a single district. Each question links to its poll's published results.
+
+**How people were found:** only people chosen at random can join, so no one can sign themselves up.
+The Survey Center selects and recruits its panelists at random through phone, text and mail surveys
+([States of Opinion Project](https://cola.unh.edu/unh-survey-center/projects/states-opinion-project);
+[panel FAQ](https://cola.unh.edu/unh-survey-center/faq/web-panel-faq)). Each completed survey enters
+the respondent in a quarterly drawing for a gift card. The answers are weighted to Census figures and
+the state's 2024 results.
+
+**Who answered:** each poll's release, in the
+[Scholars' Repository](https://scholars.unh.edu/survey_center_polls/), gives its methods and its
+results by group.
 
 **Data:** the polls and their full results are published openly in the
 [University of New Hampshire Scholars' Repository](https://scholars.unh.edu/survey_center_polls/).

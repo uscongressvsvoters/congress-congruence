@@ -172,6 +172,37 @@ def test_census_watch_loads_the_next_release_when_published(conn, monkeypatch):
     assert watch.check_census(conn) == []                    # 2026 not published
 
 
+def test_census_watch_loads_adults_by_group_once_set_up_and_retries_a_failure(conn, monkeypatch):
+    import requests
+    from congress_congruence.ingest import adult_profile, population
+    districts, states = census_fixture(119)
+    published = {2024}
+
+    def fake_fetch(year, geography, within=None, http=None):
+        if year not in published:
+            raise requests.HTTPError("404")
+        return districts if geography.startswith("congressional") else states
+
+    monkeypatch.setattr(population, "fetch", fake_fetch)
+    population.load(conn, 2024)
+    with conn.cursor() as cur:       # set up by hand once, for 2023 only
+        cur.execute("insert into core.adult_profile values (2023, 'US', 'sex', 'female', 1, 0.5, 'ACS 2023', now())")
+    conn.commit()
+    calls = []
+
+    def fake_load(c, year, http=None):
+        calls.append(year)
+        if len(calls) == 1:
+            raise RuntimeError("Census timed out")
+        return {"areas": 52}
+
+    monkeypatch.setattr(adult_profile, "load", fake_load)
+    msgs = watch.check_census(conn)                          # 2024 adults missing: tried, fails, reported
+    assert calls == [2024] and "didn't load" in msgs[0] and "adult_profile 2024" in msgs[0]
+    msgs = watch.check_census(conn)                          # tried again the next month
+    assert calls == [2024, 2024] and msgs == ["Loaded Census adults by group from ACS 2024 (52 areas)."]
+
+
 def test_census_watch_surfaces_a_key_problem(conn, monkeypatch):
     from congress_congruence.ingest import population
     population_rows = census_fixture(119)

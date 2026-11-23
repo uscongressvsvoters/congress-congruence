@@ -165,6 +165,11 @@ a.tag { white-space: normal; max-width: 100%; margin: 2px 4px 2px 0; border-radi
 .data-table th, .data-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .data-table th { font-weight: 600; }
 .table-scroll { overflow-x: auto; }
+/* Who answered a survey, beside the Census (site.js, CCWho) */
+.who-answered { margin: 8px 0 12px; }
+.who-table tbody th[scope="row"] { font-weight: 400; }
+.who-table .who-dim th { padding-top: 12px; font-size: 0.92rem; }
+.who-table td .meta { font-size: 0.8rem; }
 .verdict.with { color: var(--mark); font-weight: 600; }
 .verdict.against { color: var(--against); font-weight: 600; }
 .verdict.too_close, .verdict.did_not_vote, .verdict.not_surveyed { color: var(--ink-soft); }
