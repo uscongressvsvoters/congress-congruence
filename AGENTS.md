@@ -49,6 +49,9 @@ it. Read in this order:
   public: no secrets or private addresses in it.
 - Database changes go in a new numbered file in `sql/`; never edit one that has been applied.
 - Run `pytest` (database tests need `TEST_DATABASE_URL`) and commit only when all tests pass.
+- **Who changes main** (SEC-11): the maintainer, and AI agents working under his direction, commit and
+  push straight to `main` once all tests pass; no branch or pull request is needed. Anyone else
+  suggests changes through issues and pull requests (CONTRIBUTING.md), reviewed by the maintainer.
 - Give the person running the server complete, copy-pasteable commands (`python -m ...`, with the
   project's venv active: `source .venv/bin/activate`).
 - This repository is public. Never commit secrets, private email addresses or anything from the

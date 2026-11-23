@@ -40,7 +40,8 @@ project's transparency promise. Check them at handover and after adding anyone.
 | Member privileges → Repository deletion and transfer | **Off**: only owners can delete or transfer repos |
 | Member privileges → Team creation rules | **Off**: only owners create teams |
 
-On the repo itself: the "Protect main" ruleset, secret scanning and push protection (free for public
+On the repo itself: the "Protect main" ruleset (no deletions or force pushes; pull requests not required,
+since the maintainer and agents working for him push straight to main), secret scanning and push protection (free for public
 repos), private commit email, GitHub Actions off.
 
 ## Handover checklist

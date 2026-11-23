@@ -60,7 +60,8 @@ See `docs/SITE_PLAN.md`: header, footer and reference pages, leading with the vo
 ## Launch (Nov 10, 2026)
 - Done: repository public under the AGPL v3 (since Nov 20, 2026 in the `uscongressvsvoters` GitHub organization,
   so it can be handed to another maintainer; see docs/HANDOVER.md); ruleset "Protect main" (no deletions or force pushes,
-  pull requests required, repository admin bypasses); GitHub Actions disabled; secret scanning and push protection on; commit emails
+  repository admin bypasses; pull requests no longer required since Nov 23, 2026: the maintainer and agents
+  working for him push straight to main, others use pull requests; SEC-11); GitHub Actions disabled; secret scanning and push protection on; commit emails
   use the GitHub private address. Public site on uscongressvsvoters.org (deploy/nginx-prod.conf),
   www/.com/.online redirect to it; dev site unchanged.
 - Still open: DMARC on .org from `p=none` to `p=quarantine` once reports are clean; renew
