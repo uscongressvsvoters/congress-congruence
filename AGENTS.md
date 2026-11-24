@@ -18,6 +18,10 @@ it. Read in this order:
 8. **docs/HANDOVER.md**: accounts and resources that change hands with the project.
 9. **CONTRIBUTING.md** and **SECURITY.md**: how outside people suggest changes and report problems.
 
+Building the planned sister site for **state legislatures**? It's a separate site in its own repository,
+not part of this one. Start with **docs/STATE_SITE_GUIDE.md**: what to copy so the two sites look and
+work alike, the data sources, and how readers move between the sites.
+
 ## The site's rules (not negotiable)
 
 - **Neutral.** The same methods, wording and design for every member and party. The site never

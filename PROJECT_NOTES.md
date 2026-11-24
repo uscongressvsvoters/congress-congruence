@@ -25,7 +25,8 @@ compared with what their constituents say in public surveys, now and historicall
 - Visual rule: the picture should tell the story before the text (vote shapes, not party colors).
 - **Scope is Congress only** (decided Nov 23, 2026). State legislatures and local government are not
   covered here; Start here points readers to USA.gov's directory for them. The maintainer plans state
-  legislature coverage as a separate site (own domain, possibly its own server), which can reuse this code.
+  legislature coverage as a separate site (own domain, possibly its own server), which can reuse this code. How to build it
+  with the same look: `docs/STATE_SITE_GUIDE.md`.
 
 Full details of every source and its special handling: `docs/DATA_SOURCES.md`
 (keep it updated in the same commit as any change to how a source is handled).
