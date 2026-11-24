@@ -101,6 +101,11 @@ question that Congress also voted on, the result shows what that state's voters 
 - **Public opinion.** Members watch polls and surveys of the people they represent, which is what
   this site compares their votes with.
 
+Voters aren't the only influence. Political action committees (PACs), lobbyists, parties and other
+groups also try to shape how members vote, and campaign money is public record. This site doesn't
+show it, but each member's page links to their official campaign finance records, and the FAQ explains
+[why the site stops there and where to look](faq.html#money).
+
 ## How districts are drawn {#districts}
 
 Each representative serves one district, and every district in a state has about the same number of

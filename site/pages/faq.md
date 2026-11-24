@@ -42,6 +42,52 @@ and their party. A vote against a majority can be a principled one. The site sho
 leaves the judgment to you. [Start here](start.html#follow) covers the two classic views of what
 representatives owe the people they represent.
 
+## Why doesn't this site show campaign money or PACs? {#money}
+
+Money in politics matters to a lot of people, and it's all public record. This site points you to the
+official records but doesn't show the money itself, on purpose.
+
+**What PACs are.** A political action committee raises and spends money to help elect or defeat
+candidates. The Federal Election Commission (FEC) describes several kinds
+([FEC: Political action committees](https://www.fec.gov/press/resources-journalists/political-action-committees-pacs)):
+
+- **Connected PACs** are set up by a corporation, union, trade group or membership organization, and
+  may ask for money only from people tied to it.
+- **Nonconnected PACs** aren't tied to an organization and can raise money from the public.
+- **Leadership PACs** are run by a member of Congress or candidate, separately from their own
+  campaign, and often give to other candidates.
+- **Super PACs** may raise unlimited amounts, including from corporations and unions, to spend
+  independently, such as on ads for or against a candidate. They don't give to candidates' campaigns.
+
+PACs can give to campaigns within limits set by law; individuals, parties and the candidates
+themselves fund campaigns too. Every federal campaign and PAC reports its money to the FEC.
+
+**Why this site doesn't show it.**
+
+- **It's a different question.** This site compares one thing: how members voted against what people
+  where they live told independent surveys. Money is one possible explanation for a gap, and
+  explaining gaps is left to you.
+- **Side by side suggests a cause.** Listing donors next to votes invites the conclusion that the
+  money bought the vote. A donation and a vote can line up for many reasons; donors may give to
+  members who already agree with them. The records can't show which, and the site doesn't draw
+  conclusions it can't support.
+- **Neutrality.** The site never names or links to a party, campaign or advocacy group, and PACs are
+  campaign and advocacy groups.
+- **Accuracy.** Campaign finance records are large and easy to misread (money passed through other
+  committees, refunds, spending that isn't a contribution at all). The FEC's own pages are the
+  authoritative source.
+
+**Where to look.**
+
+- **A member's campaigns:** each member's page on this site links to their FEC records, which show
+  money raised and spent, including from PACs, with the original filings. Anyone can also search
+  [FEC campaign finance data](https://www.fec.gov/data/).
+- **Super PAC and other outside spending** for or against a candidate is reported to the FEC as
+  independent expenditures, in the same data.
+- **Lobbying:** lobbyists register and report their clients and spending to Congress
+  ([Senate lobbying disclosure](https://lda.senate.gov/) and the
+  [House Clerk's lobbying disclosure](https://lobbyingdisclosure.house.gov/)).
+
 ## How do you know what people in my district think? {#how-estimated}
 
 Large surveys such as the Cooperative Election Study ask tens of thousands of people about specific bills.

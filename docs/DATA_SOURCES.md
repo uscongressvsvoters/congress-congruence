@@ -32,6 +32,8 @@ Principles that apply to every source:
   master key. Other ID systems are translated through `core.member_external_id`:
   - Senate vote files use LIS IDs.
   - Voteview uses ICPSR IDs.
+  - FEC candidate IDs (one per office sought) are used only to link each member's page to their
+    official campaign finance records at fec.gov. No FEC data is downloaded or shown (DECISIONS 21).
 - **Terms.** Each term (chamber, state, district, party, dates) is stored separately. Every
   comparison uses the seat the member held **on the day of the vote**. That matters when
   districts are redrawn or a member moves between chambers.

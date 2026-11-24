@@ -272,3 +272,13 @@ def test_sitemap_dates_change_only_when_a_page_does(tmp_path):
     sm = (out / "sitemap.xml").read_text()
     assert "<loc>https://uscongressvsvoters.org/about.html</loc><lastmod>2026-11-25</lastmod>" in sm
     assert "<loc>https://uscongressvsvoters.org/members/ted-cruz/</loc><lastmod>2026-11-10</lastmod>" in sm
+
+
+def test_campaign_finance_links_only():
+    """Member pages link to the FEC's records and the FAQ, and show no money figures or names."""
+    m = {"fec_ids": ["H8TX01001", "S0TX00002", "X123"], "chamber": "senate"}
+    html = "\n".join(bp.money_html(m))
+    assert 'href="https://www.fec.gov/data/candidate/S0TX00002/"' in html
+    assert html.index("S0TX00002") < html.index("H8TX01001")        # Senate first, then House
+    assert "X123" not in html and 'href="faq.html#money"' in html and "$" not in html
+    assert bp.money_html({"fec_ids": []}) == [] and bp.money_html({}) == []

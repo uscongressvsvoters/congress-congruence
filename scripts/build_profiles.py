@@ -286,6 +286,24 @@ def contact_html(m: dict) -> list[str]:
     return out
 
 
+FEC_OFFICE = {"H": "House", "S": "Senate", "P": "presidential"}
+
+
+def money_html(m: dict) -> list[str]:
+    """Links to the member's official campaign finance records at the FEC, and why the site goes no
+    further (site/pages/faq.md#money). No figures and no donor or PAC names, by design."""
+    ids = [i for i in m.get("fec_ids") or [] if i[:1] in FEC_OFFICE]
+    if not ids:
+        return []
+    links = [f'<a href="https://www.fec.gov/data/candidate/{e(i)}/" rel="noopener">'
+             f'{FEC_OFFICE[i[0]]} campaigns ({e(i)})</a>' for i in sorted(ids, key=lambda i: "SHP".index(i[0]))]
+    return ['<h2 id="money">Campaign finance</h2>',
+            "<p>Who gives money to a member's campaigns, including political action committees (PACs), is "
+            "public record at the Federal Election Commission. This site doesn't show it: "
+            '<a href="faq.html#money">the FAQ explains why</a>. Their official FEC records:</p>',
+            f'<ul class="contact"><li>{" · ".join(links)}</li></ul>']
+
+
 def member_page(m: dict, opinion: dict | None, votes: list[dict], slugs: dict, today: date) -> tuple[dict, str]:
     sid, state = m["bioguide_id"], m["state"]
     sname = STATE_NAMES.get(state, state)
@@ -341,6 +359,7 @@ def member_page(m: dict, opinion: dict | None, votes: list[dict], slugs: dict, t
             p.append(f"<p>{e(pop['area'])} has about {people(pop['residents'])} residents.</p>")
         p.append(citizens_line(pop))
     p += contact_html(m)
+    p += money_html(m)
 
     # ---- surveyed votes
     items = (opinion or {}).get("items") or []

@@ -511,7 +511,8 @@ def period_stats(bioguide_id: str, congress: int, chamber: str) -> dict:
 
 @app.get("/v1/members/{bioguide_id}")
 def member(bioguide_id: str, response: Response):
-    """Profile and figures. 'service' has attendance and party alignment for every Congress and
+    """Profile and figures. 'fec_ids' are the member's Federal Election Commission candidate IDs (one
+    per office sought), for links to their official campaign finance reports. 'service' has attendance and party alignment for every Congress and
     chamber the member voted in (newest first); 'stats' is the most recent of them, or the current
     Congress if they haven't voted yet."""
     row = get_member_row(bioguide_id)
@@ -532,6 +533,7 @@ def member(bioguide_id: str, response: Response):
         "service": service,
         "seats": seat_history(fetch(q.TERMS, {"id": bioguide_id}), date.today()),
         **(member_contact(bioguide_id) if row["serving"] else {}),
+        "fec_ids": [r["id_value"] for r in fetch(q.FEC_IDS, {"id": bioguide_id})],
     }
 
 

@@ -65,3 +65,12 @@ in `DATA_SOURCES.md`; current status is in `../PROJECT_NOTES.md`.
     Census. This is visible data, not an adjustment: no estimate or score changes. There are no district
     tables, because survey weights are built for states and the nation and districts have too few
     respondents.
+
+## 24 November 2026
+
+21. **Campaign money: point to the official records, show none of it.** Member pages link to each
+    member's FEC candidate pages, and the FAQ (`#money`) explains PACs, why the site stops there and
+    where to look (FEC, House and Senate lobbying disclosure). No amounts, donor or PAC names, or
+    rankings. Reasons: it's a different question from votes versus voters; money beside votes implies
+    a cause the records can't show; PACs are campaigns and advocacy groups, which the site never
+    names; and the data is easy to misread. Figures would belong in a separate project.

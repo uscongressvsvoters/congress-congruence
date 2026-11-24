@@ -62,6 +62,8 @@ def client():
                            values ('D000001', 'https://dee.house.gov', '202-225-0001', '1 Longworth')""")
             cur.execute("""insert into core.member_office (bioguide_id, office_id, city, state, phone)
                            values ('D000001', 'D000001-austin', 'Austin', 'TX', '512-555-0100')""")
+            cur.executemany("insert into core.member_external_id (id_type, id_value, bioguide_id) values (%s, %s, %s)",
+                            [("fec", "H8TX01001", "D000001"), ("fec", "S0TX00002", "D000001"), ("icpsr", "1", "D000001")])
             cur.executemany("insert into core.zip_district values (%s, %s, %s, %s, %s)",
                             [(119, "78701", "TX", 1, 0.7), (119, "78701", "TX", 2, 0.3), (119, "99501", "AK", 0, 1.0)])
         c.commit()
@@ -427,7 +429,9 @@ def test_contacts_and_zip_districts(client):
     m = client.get("/v1/members/D000001").json()
     assert m["contact"] == {"website": "https://dee.house.gov", "phone": "202-225-0001", "address": "1 Longworth"}
     assert m["offices"] == [{"city": "Austin", "state": "TX", "phone": "512-555-0100"}]
+    assert m["fec_ids"] == ["H8TX01001", "S0TX00002"]          # FEC only, all of them
     assert "contact" not in client.get("/v1/members/D000002").json()
+    assert client.get("/v1/members/D000002").json()["fec_ids"] == []
     listed = {x["bioguide_id"]: x for x in client.get("/v1/members?state=TX&contact=true").json()["members"]}
     assert listed["D000001"]["contact"]["phone"] == "202-225-0001" and "contact" not in listed["D000002"]
     assert "contact" not in client.get("/v1/members?state=TX").json()["members"][0]

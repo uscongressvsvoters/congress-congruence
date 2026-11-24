@@ -72,6 +72,11 @@ select bioguide_id, website, contact_form, phone, address
   from core.member_contact where bioguide_id = any(%(ids)s)
 """
 
+FEC_IDS = """
+select id_value from core.member_external_id
+ where bioguide_id = %(id)s and id_type = 'fec' order by id_value
+"""
+
 OFFICES = """
 select city, state, address, suite, building, zip, phone
   from core.member_office where bioguide_id = %(id)s

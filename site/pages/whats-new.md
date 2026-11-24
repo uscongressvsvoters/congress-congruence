@@ -8,11 +8,18 @@ description: Everything added to US Congress vs Voters, newest first - new surve
 <a href="upcoming.html">Upcoming changes</a>. Every change that corrected a figure is in the
 <a href="corrections.html">corrections log</a>.</p>
 
-*Last updated November 23, 2026.*
+*Last updated November 24, 2026.*
 
 Follow these and every correction in a feed reader: [updates feed (RSS)](feed.xml).
 
 ## Recently added {#recent}
+
+**November 24, 2026**
+
+- **Campaign money and PACs.** A new [FAQ entry](faq.html#money) explains what political action
+  committees are, why this site doesn't show campaign money, and where the official records are. Each
+  member's page now links to their campaign finance records at the Federal Election Commission, and
+  [Start here](start.html#influence) mentions both.
 
 **November 23, 2026**
 
