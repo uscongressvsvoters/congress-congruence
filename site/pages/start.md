@@ -159,6 +159,14 @@ Each member's page on this site lists their website, contact form, Washington ph
 offices back home. You can also call the U.S. Capitol switchboard at 202-224-3121 and ask for your
 member's office.
 
+**Is it a federal issue?** Many of the decisions closest to home aren't made by Congress. State
+legislatures make most laws on land use and development, property taxes, schools, roads, water, and
+what cities and counties may regulate. City councils and county officials decide much of the rest.
+This site covers only Congress. For state and local questions, contact your state legislators or local
+officials. USA.gov lists every state legislature's website (many let you look up your legislators by address) and
+directories of mayors and county officials
+([USA.gov: Find and contact elected officials](https://www.usa.gov/elected-officials)).
+
 ## Should members follow the people they represent? {#follow}
 
 People have argued about this for as long as there have been elected representatives, and this site

@@ -16,6 +16,9 @@ Follow these and every correction in a feed reader: [updates feed (RSS)](feed.xm
 
 **November 23, 2026**
 
+- **State and local issues.** [Start here](start.html#contact) now notes that many decisions closest
+  to home, like land use, property taxes and schools, are made by state legislatures and local
+  officials rather than Congress, and links to USA.gov's directory for finding them.
 - **Who answered each survey.** [Sources](sources.html#who-answered) now says how each survey found its
   respondents: from online panels people sign up to, or by inviting only people chosen at random. It
   also says how respondents are rewarded and what the answers are weighted to, and explains what
