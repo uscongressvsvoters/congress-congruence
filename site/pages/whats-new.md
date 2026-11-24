@@ -18,7 +18,8 @@ Follow these and every correction in a feed reader: [updates feed (RSS)](feed.xm
 
 - **Campaign money and PACs.** A new [FAQ entry](faq.html#money) explains what political action
   committees are, why this site doesn't show campaign money, and where the official records are. Each
-  member's page now links to their campaign finance records at the Federal Election Commission, and
+  member's page and the interactive member view now link to their campaign finance records at the
+  Federal Election Commission, and
   [Start here](start.html#influence) mentions both.
 
 **November 23, 2026**

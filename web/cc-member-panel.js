@@ -538,6 +538,16 @@
           offices && slug ? [" · ", h("a", { href: `${siteBase}members/${slug}/#contact` },
             `${offices} office${offices === 1 ? "" : "s"} in the ${m.chamber === "senate" ? "state" : "district"}`)] : null));
       }
+      // Official campaign finance records (FEC); the site itself shows no money (faq.html#money).
+      const OFFICE = { S: "Senate", H: "House", P: "presidential" };
+      const fec = (m.fec_ids || []).filter(i => OFFICE[i[0]]).sort((a, b) => "SHP".indexOf(a[0]) - "SHP".indexOf(b[0]));
+      if (fec.length) {
+        const links = fec.map(i => h("a", { href: `https://www.fec.gov/data/candidate/${encodeURIComponent(i)}/`, rel: "noopener" },
+          fec.length > 1 ? `${OFFICE[i[0]]} campaigns` : "FEC records"));
+        parts.push(h("p", { class: "people contact" }, h("strong", {}, "Campaign finance: "),
+          ...links.flatMap((b, i) => i ? [" · ", b] : [b]),
+          " (", h("a", { href: `${siteBase}faq.html#money` }, "why this site doesn't show it"), ")"));
+      }
       const jumps = [];
       if (this.opinion?.items?.length) {
         jumps.push(["compared", "Compared with constituents"]);
